@@ -1,12 +1,12 @@
 # Leafty-BE
 ## Contributors:
-### @troyprajoga - Troy
-### @josephruys - Joseph
-### @pranav.h.n - Pranav
-### @sulthanazka - Azka
+- troyprajoga - Troy
+- Tropicaljittai - Joseph
+- Randomkings- Pranav
+- Narwhalsss - Azka
 
 ```
-Back-end developers:
+Back-end developers POV:
                             ██████                
               ██████      ██      ▓▓              
             ██░░    ██  ██░░        ██            
@@ -55,4 +55,6 @@ Back-end developers:
             ██░░    ██    ██░░░░  ██              
             ██████████    ██████████              
               ▓▓████        ▓▓████
+Soon, they will become a chef.
+P.S. Will be removed (on week 12) and change to a proper readme for the api.
 ```            
