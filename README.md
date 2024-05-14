@@ -4,7 +4,7 @@ Contributors:
 @josephruys - Joseph
 @pranav.h.n - Pranav
 @sulthanazka - Azka
-
+```
                             ██████                
               ██████      ██      ▓▓              
             ██░░    ██  ██░░        ██            
@@ -52,4 +52,5 @@ Contributors:
             ██      ██    ██░░░░  ██              
             ██░░    ██    ██░░░░  ██              
             ██████████    ██████████              
-              ▓▓████        ▓▓████                
+              ▓▓████        ▓▓████
+```            
