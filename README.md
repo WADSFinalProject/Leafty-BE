@@ -1,10 +1,12 @@
 # Leafty-BE
-Contributors:
-@troyprajoga - Troy
-@josephruys - Joseph
-@pranav.h.n - Pranav
-@sulthanazka - Azka
+## Contributors:
+### @troyprajoga - Troy
+### @josephruys - Joseph
+### @pranav.h.n - Pranav
+### @sulthanazka - Azka
+
 ```
+Back-end developers:
                             ██████                
               ██████      ██      ▓▓              
             ██░░    ██  ██░░        ██            
