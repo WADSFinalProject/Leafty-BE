@@ -5,6 +5,8 @@ from datetime import datetime
 class RoleBase(BaseModel):
     RoleName: str
     
+class SessionData(BaseModel):
+    user_id: str
 
 class RoleCreate(RoleBase):
     pass

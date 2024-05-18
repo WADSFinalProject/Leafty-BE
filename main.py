@@ -1,17 +1,49 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request, Response, status, __version__
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
 import uuid
-
+from BasicVerifier import BasicVerifier
+from fastapi_sessions.backends.implementations import InMemoryBackend
+from schemas import User, SessionData
+from uuid import UUID, uuid4
+from fastapi.middleware.cors import CORSMiddleware
 import crud
 import models
 import schemas
 from database import SessionLocal, engine
-
+from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
+from fastapi_sessions.session_verifier import SessionVerifier
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+backend = InMemoryBackend[UUID, SessionData]()
+
+verifier = BasicVerifier(
+    identifier="general_verifier",
+    auto_error=True,
+    backend=backend,
+    auth_http_exception=HTTPException(status_code=404, detail="invalid session"),
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = Response("Internal server error", status_code=500)
+    try:
+        request.state.db = SessionLocal()
+        response = await call_next(request)
+    finally:
+        request.state.db.close()
+    return response
 
 def get_db():
     db = SessionLocal()
@@ -19,6 +51,55 @@ def get_db():
         yield db
     finally:
         db.close()
+
+cookie_params = CookieParameters(
+    secure=True,  # Ensures cookie is sent over HTTPS
+    httponly=True,
+    samesite="none"  # Allows the cookie to be sent with cross-origin requests
+)
+
+cookie = SessionCookie(
+    cookie_name="session",
+    identifier="general_verifier",
+    auto_error=True,
+    secret_key="DONOTUSE",
+    cookie_params=cookie_params,
+)
+
+
+## Sessions
+@app.post("/create_session/{user_id}")
+async def create_session(user_id: str, response: Response, db: Session = Depends(get_db)):
+    session = uuid4()
+    data = SessionData(user_id=user_id)
+
+    await backend.create(session, data)
+    cookie.attach_to_response(response, session) 
+    
+    response.headers["Set-Cookie"] += "; SameSite=None"
+
+    # response.set_cookie("session", session, samesite="none", secure=True)
+
+    crud.create_session(db, session, user_id)
+
+    return f"created session for {user_id}"
+
+
+@app.get("/whoami", dependencies=[Depends(cookie)])
+async def whoami(session_data: SessionData = Depends(verifier)):
+    return session_data
+
+
+@app.delete("/delete_session", dependencies=[Depends(cookie)])
+async def del_session(response: Response, session_id: UUID = Depends(cookie), db: Session = Depends(get_db)):
+    await backend.delete(session_id)
+    cookie.delete_from_response(response)
+
+    response.headers["Set-Cookie"] += "; SameSite=None"
+    
+    crud.delete_session(db)
+
+    return "deleted session"
 
 #roles
 @app.post("/roles/", response_model=schemas.Role,tags=["Roles"])
@@ -29,6 +110,14 @@ def create_role(role: schemas.RoleCreate, db: Session = Depends(get_db)):
 def get_roles(db: Session = Depends(get_db)):
     return crud.get_roles(db=db)
 
+@app.delete("/delete_role_by_id", response_class=JSONResponse,tags=["Roles"])
+def delete_user(role_id: str ,db: Session = Depends(get_db)):
+    deleted = crud.delete_role_by_id(db, role_id)
+    if deleted:
+        return {"message": "Role deleted successfully"}
+    else:
+        return {"message": "Role not found or deletion failed"}
+    
 # users
 @app.post('/users/', response_model=schemas.User,tags=["Users"])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):

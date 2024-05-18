@@ -1,9 +1,15 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTime, Enum, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, UUID
 
 Base = declarative_base()
 
+class SessionData(Base):
+    __tablename__ = "sessions"
+
+    session_id = Column(String(36), unique=True, primary_key=True)
+    user_id = Column(String(36), ForeignKey('users.UserID'))
 
 class RoleModel(Base):
     __tablename__ = "roles"

@@ -3,6 +3,20 @@ import models
 import schemas
 import uuid
 
+#sessions
+def create_session(db: Session, session_id:str, user_id: str):
+    db_session = models.SessionData(session_id=session_id, user_id = user_id)
+    db.add(db_session)
+    db.commit()
+
+def check_session(db: Session, session_id: str):
+    db_session = db.query(models.SessionData).filter(session_id = session_id)
+    return db_session
+
+def delete_session(db: Session):
+    db.query(models.SessionData).delete()
+    db.commit()
+
 #users
 def create_user(db: Session, user: schemas.UserCreate):
   
@@ -55,6 +69,14 @@ def get_role(db: Session, role_id: int):
 
 def get_roles(db: Session):
     return db.query(models.RoleModel).all()
+
+def delete_role_by_id(db: Session, role_id: str):
+    db_user = db.query(models.RoleModel).filter(models.RoleModel.RoleID == role_id).first()
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return True
+    return False
 
 #courier
 def create_courier(db: Session, courier: schemas.CourierCreate):
