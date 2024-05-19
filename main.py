@@ -29,7 +29,7 @@ verifier = BasicVerifier(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,7 +68,7 @@ cookie = SessionCookie(
 
 
 ## Sessions
-@app.post("/create_session/{user_id}")
+@app.post("/create_session/{user_id}",tags=["Sessions"])
 async def create_session(user_id: str, response: Response, db: Session = Depends(get_db)):
     session = uuid4()
     data = SessionData(user_id=user_id)
@@ -85,12 +85,12 @@ async def create_session(user_id: str, response: Response, db: Session = Depends
     return f"created session for {user_id}"
 
 
-@app.get("/whoami", dependencies=[Depends(cookie)])
+@app.get("/whoami", dependencies=[Depends(cookie)],tags=["Sessions"])
 async def whoami(session_data: SessionData = Depends(verifier)):
     return session_data
 
 
-@app.delete("/delete_session", dependencies=[Depends(cookie)])
+@app.delete("/delete_session", dependencies=[Depends(cookie)],tags=["Sessions"])
 async def del_session(response: Response, session_id: UUID = Depends(cookie), db: Session = Depends(get_db)):
     await backend.delete(session_id)
     cookie.delete_from_response(response)
@@ -134,7 +134,7 @@ def get_users(limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, limit=limit)
     return users
 
-@app.get("/get_users_by_id/", response_model=List[schemas.User],tags=["Users"])
+@app.get("/get_users_by_roleid/", response_model=List[schemas.User],tags=["Users"])
 def get_user(role_id: int,db: Session = Depends(get_db)):
     role = crud.get_user_by_role(db, role_id)
     if not role:
@@ -142,6 +142,11 @@ def get_user(role_id: int,db: Session = Depends(get_db)):
     else:
         users = crud.get_user_by_role(db,role_id)
         return users
+    
+@app.get("/get_users_by_userid/{user_id}", response_model=schemas.User,tags=["Users"])
+def get_user(user_id: str,db: Session = Depends(get_db)):
+    user = crud.get_user_by_id(db, user_id)
+    return user
 
 @app.put('/users/{user_id}', response_model=schemas.UserUpdate, tags=["Users"])
 def update_user(user_id: str, user: schemas.UserUpdate, db: Session = Depends(get_db)):
