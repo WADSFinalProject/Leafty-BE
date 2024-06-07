@@ -37,6 +37,9 @@ def get_users(db: Session, limit: int = 100):
 def get_user_by_id(db: Session, user_id: str):
     return db.query(models.User).filter(models.User.UserID == user_id).first()
 
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.Email == email).first()
+
 def update_user(db: Session, user_id: uuid.UUID, user_update: schemas.UserUpdate):
     user = db.query(models.User).filter(models.User.UserID == user_id).first()
     if not user:

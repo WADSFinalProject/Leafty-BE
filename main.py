@@ -29,7 +29,7 @@ verifier = BasicVerifier(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -146,6 +146,11 @@ def get_user(role_id: int,db: Session = Depends(get_db)):
 @app.get("/user/get_user/{user_id}", response_model=schemas.User,tags=["Users"])
 def get_user(user_id: str,db: Session = Depends(get_db)):
     user = crud.get_user_by_id(db, user_id)
+    return user
+
+@app.get("/user/get_user_email/{email}", response_model=schemas.User,tags=["Users"])
+def get_user(email: str,db: Session = Depends(get_db)):
+    user = crud.get_user_by_email(db, email)
     return user
 
 @app.put('/user/put/{user_id}', response_model=schemas.UserUpdate, tags=["Users"])
