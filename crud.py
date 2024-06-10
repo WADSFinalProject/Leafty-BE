@@ -51,6 +51,15 @@ def update_user(db: Session, user_id: uuid.UUID, user_update: schemas.UserUpdate
     db.refresh(user)
     return user
 
+def update_user_role(db: Session, user_id: str, role_id: int):
+    user = db.query(models.User).filter(models.User.UserID == user_id).first()
+    if not user:
+        return None
+    user.RoleID = role_id
+    db.commit()
+    db.refresh(user)
+    return user
+
 def delete_user_by_id(db: Session, user_id: str):
     db_user = db.query(models.User).filter(models.User.UserID == user_id).first()
     if db_user:
