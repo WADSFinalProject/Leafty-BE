@@ -72,6 +72,7 @@ class DryLeavesBase(BaseModel):
     WetLeavesID: int
     Processed_Weight: Optional[float]
     Expiration: Optional[datetime]
+    Status: Optional[str] = "Awaiting"
 
 class DryLeavesCreate(DryLeavesBase):
     pass
@@ -84,11 +85,16 @@ class DryLeaves(DryLeavesBase):
 
 class DryLeavesUpdate(BaseModel):
     Weight: float
+    Status: Optional[str] = None
+    
+class DryLeavesStatusUpdate(BaseModel):
+    Status: str
 
 class WetLeavesBase(BaseModel):
     UserID: UUID4
     Weight: float
     ReceivedTime: datetime
+    Status: Optional[str] = "Awaiting"
 
 class WetLeavesCreate(WetLeavesBase):
     pass
@@ -101,6 +107,10 @@ class WetLeaves(WetLeavesBase):
 
 class WetLeavesUpdate(BaseModel):
     Weight: float
+    Status: Optional[str] = None
+    
+class WetLeavesStatusUpdate(BaseModel):
+    Status: str
 
 class FlourBase(BaseModel):
     UserID: UUID4
@@ -108,6 +118,7 @@ class FlourBase(BaseModel):
     WetLeavesID: int
     Flour_Weight: float
     Expiration: Optional[datetime]
+    Status: Optional[str] = "Awaiting"
 
 class FlourCreate(FlourBase):
     pass
@@ -120,6 +131,10 @@ class Flour(FlourBase):
 
 class FlourUpdate(BaseModel):
     Weight: float
+    Status: Optional[str] = None
+    
+class FlourStatusUpdate(BaseModel):
+    Status: str
 
 class ShipmentBase(BaseModel):
     CourierID: int

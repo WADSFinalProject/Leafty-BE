@@ -136,6 +136,17 @@ def update_wet_leaves(db: Session, wet_leaves_id: int, wet_leaves_update: schema
     if not db_wet_leaves:
         return None
     db_wet_leaves.Weight = wet_leaves_update.Weight
+    if wet_leaves_update.Status:
+        db_wet_leaves.Status = wet_leaves_update.Status
+    db.commit()
+    db.refresh(db_wet_leaves)
+    return db_wet_leaves
+
+def update_wet_leaves_status(db: Session, wet_leaves_id: int, status_update: schemas.WetLeavesStatusUpdate):
+    db_wet_leaves = db.query(models.WetLeaves).filter(models.WetLeaves.WetLeavesID == wet_leaves_id).first()
+    if not db_wet_leaves:
+        return None
+    db_wet_leaves.Status = status_update.Status
     db.commit()
     db.refresh(db_wet_leaves)
     return db_wet_leaves
@@ -167,9 +178,21 @@ def update_dry_leaves(db: Session, dry_leaves_id: int, dry_leaves_update: schema
     if not db_dry_leaves:
         return None
     db_dry_leaves.Processed_Weight = dry_leaves_update.Weight
+    if dry_leaves_update.Status:
+        db_dry_leaves.Status = dry_leaves_update.Status
     db.commit()
     db.refresh(db_dry_leaves)
     return db_dry_leaves
+
+def update_dry_leaves_status(db: Session, dry_leaves_id: int, status_update: schemas.DryLeavesStatusUpdate):
+    db_dry_leaves = db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
+    if not db_dry_leaves:
+        return None
+    db_dry_leaves.Status = status_update.Status
+    db.commit()
+    db.refresh(db_dry_leaves)
+    return db_dry_leaves
+
 
 #flour
 def create_flour(db: Session, flour: schemas.WetLeavesCreate):
@@ -197,7 +220,18 @@ def update_flour(db: Session, flour_id: int, flour_update: schemas.FlourUpdate):
     db_flour = db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
     if not db_flour:
         return None
-    db_flour.Flour_Weight= flour_update.Weight
+    db_flour.Flour_Weight = flour_update.Weight
+    if flour_update.Status:
+        db_flour.Status = flour_update.Status
+    db.commit()
+    db.refresh(db_flour)
+    return db_flour
+
+def update_flour_status(db: Session, flour_id: int, status_update: schemas.FlourStatusUpdate):
+    db_flour = db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
+    if not db_flour:
+        return None
+    db_flour.Status = status_update.Status
     db.commit()
     db.refresh(db_flour)
     return db_flour

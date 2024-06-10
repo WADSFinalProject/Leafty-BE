@@ -49,6 +49,7 @@ class WetLeaves(Base):
     UserID = Column(String(36), ForeignKey("users.UserID"))
     Weight = Column(Float)
     ReceivedTime = Column(DateTime)
+    Status = Column(String(50), default="Awaiting")
 
 class DryLeaves(Base):
     __tablename__ = "dry_leaves"
@@ -58,6 +59,7 @@ class DryLeaves(Base):
     WetLeavesID = Column(Integer, ForeignKey("wet_leaves.WetLeavesID"))
     Processed_Weight = Column(Float)
     Expiration = Column(DateTime, nullable=True)
+    Status = Column(String(50), default="Awaiting")
 
 class Flour(Base):
     __tablename__ = "flour"
@@ -68,6 +70,7 @@ class Flour(Base):
     WetLeavesID = Column(Integer, ForeignKey("wet_leaves.WetLeavesID"))
     Flour_Weight = Column(Float)
     Expiration = Column(DateTime, nullable=True)
+    Status = Column(String(50), default="Awaiting")
 
 class Shipment(Base):
     __tablename__ = "shipments"

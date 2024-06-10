@@ -205,6 +205,7 @@ def delete_courier(courier_id: int, db: Session = Depends(get_db)):
         return {"message": "Courier deleted successfully"}
     else:
         raise HTTPException(status_code=404, detail="Courier not found or deletion failed")
+    
 #wet_leaves
 @app.post("/wetLeaves/post", response_model=schemas.WetLeaves,tags=["WetLeaves"])
 def create_wet_leaves(wet_leaves: schemas.WetLeavesCreate, db: Session = Depends(get_db)):
@@ -235,6 +236,13 @@ def update_wet_leaves(wet_leaves_id: int, wet_leaves: schemas.WetLeavesUpdate, d
     if not update_wet_leaves:
         raise HTTPException(status_code=404, detail="wet leaves not found")
     return update_wet_leaves
+
+@app.put("/wetleaves/update_status/{wet_leaves_id}", response_model=schemas.WetLeaves, tags=["WetLeaves"])
+def update_wet_leaves_status(wet_leaves_id: int, status_update: schemas.WetLeavesStatusUpdate, db: Session = Depends(get_db)):
+    updated_wet_leaves = crud.update_wet_leaves_status(db=db, wet_leaves_id=wet_leaves_id, status_update=status_update)
+    if not updated_wet_leaves:
+        raise HTTPException(status_code=404, detail="wet leaves not found")
+    return updated_wet_leaves
  
 # dry leaves
 @app.post("/dryleaves/post", response_model=schemas.DryLeaves,tags=["DryLeaves"])
@@ -267,6 +275,13 @@ def update_dry_leaves(dry_leaves_id: int, dry_leaves: schemas.DryLeavesUpdate, d
         raise HTTPException(status_code=404, detail="dry leaves not found")
     return update_dry_leaves
 
+@app.put("/dryleaves/update_status/{dry_leaves_id}", response_model=schemas.DryLeaves, tags=["DryLeaves"])
+def update_dry_leaves_status(dry_leaves_id: int, status_update: schemas.DryLeavesStatusUpdate, db: Session = Depends(get_db)):
+    updated_dry_leaves = crud.update_dry_leaves_status(db=db, dry_leaves_id=dry_leaves_id, status_update=status_update)
+    if not updated_dry_leaves:
+        raise HTTPException(status_code=404, detail="dry leaves not found")
+    return updated_dry_leaves
+
 #flour
 @app.post("/flour/post", response_model=schemas.Flour,tags=["Flour"])
 def create_flour(flour: schemas.FlourCreate, db: Session = Depends(get_db)):
@@ -298,6 +313,13 @@ def update_flour(flour_id: int, flour: schemas.FlourUpdate, db: Session= Depends
     if not update_flour:
         raise HTTPException(status_code=404, detail="flour not found")
     return update_flour
+
+@app.put("/flour/update_status/{flour_id}", response_model=schemas.Flour, tags=["Flour"])
+def update_flour_status(flour_id: int, status_update: schemas.FlourStatusUpdate, db: Session = Depends(get_db)):
+    updated_flour = crud.update_flour_status(db=db, flour_id=flour_id, status_update=status_update)
+    if not updated_flour:
+        raise HTTPException(status_code=404, detail="flour not found")
+    return updated_flour
 
 
 #shipment
