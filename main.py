@@ -162,10 +162,24 @@ def update_user(user_id: str, user: schemas.UserUpdate, db: Session = Depends(ge
 
 @app.put('/user/update_role/{user_id}', response_model=schemas.User, tags=["Users"])
 def update_user_role(user_id: str, role_update: schemas.UserRoleUpdate, db: Session = Depends(get_db)):
-    updated_user = crud.update_user_role(db=db, user_id=user_id, role_id=role_update.RoleID)
+    role_name_to_id = {
+        "Centra": 1,
+        "Harbor": 2,
+        "Company": 3,
+        "Admin": 4,
+        "Unverified": 5,
+        "Rejected": 6
+    }
+    role_id = role_name_to_id.get(role_update.RoleName)
+    print(role_id)
+    if role_id is None:
+        raise HTTPException(status_code=400, detail="Invalid role name")
+    
+    updated_user = crud.update_user_role(db=db, user_id=user_id, role_id=role_id)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User does not exist or role does not exist")
     return updated_user
+
 
 @app.delete("/user/delete/{user_id}", response_class=JSONResponse,tags=["Users"])
 def delete_user(user_id: str ,db: Session = Depends(get_db)):

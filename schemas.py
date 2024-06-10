@@ -27,7 +27,7 @@ class UserCreate(UserBase):
     Password: str
     
 class UserRoleUpdate(BaseModel):
-    RoleID: int
+    RoleName: str
 
 class UserUpdate(BaseModel):
     Password: Optional[str] = None
