@@ -222,6 +222,13 @@ def get_wet_leaves_id(wet_leaves_id: int,db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="wet leaves not found")
     return wet_leaves
 
+@app.get("/wetleaves/get_by_user/{user_id}", response_model=List[schemas.WetLeaves], tags=["WetLeaves"])
+def get_wet_leaves_by_user(user_id: str, db: Session = Depends(get_db)):
+    wet_leaves = crud.get_wet_leaves_by_user_id(db, user_id)
+    if not wet_leaves:
+        raise HTTPException(status_code=404, detail="wet leaves not found")
+    return wet_leaves
+
 @app.delete("/wetleaves/delete/{wet_leaves_id}", response_class=JSONResponse,tags=["WetLeaves"])
 def delete_wet_leaves_by_id(wet_leaves_id: int, db: Session = Depends(get_db)):
     delete = crud.delete_wet_leaves_by_id( db=db, wet_leaves_id=wet_leaves_id)
@@ -256,6 +263,13 @@ def get_dry_leaves(limit: int = 100, db: Session = Depends(get_db)):
 @app.get("/dryleaves/get/{dry_leaves_id}", response_model= schemas.DryLeaves,tags=["DryLeaves"])
 def get_dry_leaves_id(dry_leaves_id: int,db: Session = Depends(get_db)):
     dry_leaves = crud.get_dry_leaves_by_id( db=db, dry_leaves_id = dry_leaves_id)
+    if not dry_leaves:
+        raise HTTPException(status_code=404, detail="dry leaves not found")
+    return dry_leaves
+
+@app.get("/dryleaves/get_by_user/{user_id}", response_model=List[schemas.DryLeaves], tags=["DryLeaves"])
+def get_dry_leaves_by_user(user_id: str, db: Session = Depends(get_db)):
+    dry_leaves = crud.get_dry_leaves_by_user_id(db, user_id)
     if not dry_leaves:
         raise HTTPException(status_code=404, detail="dry leaves not found")
     return dry_leaves
@@ -298,6 +312,13 @@ def get_flour_by_id(flour_id: int,db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="flour not found")
     else:
         return flour
+    
+@app.get("/flour/get_by_user/{user_id}", response_model=List[schemas.Flour], tags=["Flour"])
+def get_flour_by_user(user_id: str, db: Session = Depends(get_db)):
+    flour = crud.get_flour_by_user_id(db, user_id)
+    if not flour:
+        raise HTTPException(status_code=404, detail="flour not found")
+    return flour
  
 @app.delete("/flour/delete/{flour_id}", response_class=JSONResponse,tags=["Flour"])
 def delete_flour_by_id(flour_id: int, db: Session = Depends(get_db)):
@@ -336,6 +357,13 @@ def get_shipment_by_id(shipment_id:int, db: Session = Depends(get_db)):
     shipment = crud.get_shipment_by_id(db=db,shipment_id=shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="shipment not found")
+    return shipment
+
+@app.get("/shipment/get_by_user/{user_id}", response_model=List[schemas.Shipment], tags=["Shipment"])
+def get_Shipment_by_user(user_id: str, db: Session = Depends(get_db)):
+    shipment = crud.get_shipment_by_user_id(db, user_id)
+    if not shipment:
+        raise HTTPException(status_code=404, detail="shipment                            not found")
     return shipment
 
 @app.put("/shipment/put/{shipment_id}", response_model=schemas.Shipment,tags=["Shipment"])

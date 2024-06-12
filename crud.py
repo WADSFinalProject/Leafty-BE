@@ -123,6 +123,9 @@ def get_wet_leaves(db: Session, limit: int = 100):
 def get_wet_leaves_by_id(db: Session, wet_leaves_id: int):
     return db.query(models.WetLeaves).filter(models.WetLeaves.WetLeavesID == wet_leaves_id).first()
 
+def get_wet_leaves_by_user_id(db: Session,user_id: str):
+    return db.query(models.WetLeaves).filter(models.WetLeaves.UserID == user_id).all()
+
 def delete_wet_leaves_by_id(db: Session, wet_leaves_id: int):
     wet_leaves = db.query(models.WetLeaves).filter(models.WetLeaves.WetLeavesID == wet_leaves_id).first()
     if wet_leaves:
@@ -164,6 +167,9 @@ def get_dry_leaves(db: Session, limit: int = 100):
 
 def get_dry_leaves_by_id(db: Session, dry_leaves_id: int):
     return db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
+
+def get_dry_leaves_by_user_id(db: Session, user_id: str):
+    return db.query(models.DryLeaves).filter(models.DryLeaves.UserID == user_id).all()
 
 def delete_dry_leaves_by_id(db: Session, dry_leaves_id: int):
     dry_leaves = db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
@@ -208,6 +214,9 @@ def get_flour(db: Session, limit: int = 100):
 def get_flour_by_id(db: Session, flour_id: int):
     return db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
 
+def get_flour_by_user_id(db: Session, user_id: str):
+    return db.query(models.Flour).filter(models.Flour.UserID == user_id).all()
+
 def delete_flour_by_id(db: Session, flour_id: int):
     flour = db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
     if flour:
@@ -249,6 +258,9 @@ def get_shipment(db: Session, limit: int = 100):
 
 def get_shipment_by_id(db: Session, shipment_id: int):
     return db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+
+def get_shipment_by_user_id(db: Session, user_id: str):
+    return db.query(models.Shipment).filter(models.Shipment.UserID == user_id).all()
 
 def delete_shipment_by_id(db: Session, shipment_id: int):
     shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
