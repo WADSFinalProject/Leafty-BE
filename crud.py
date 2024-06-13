@@ -1,4 +1,7 @@
+from sqlalchemy import cast
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
+from fastapi import HTTPException, Depends
 import models
 import schemas
 import uuid
@@ -35,7 +38,7 @@ def get_users(db: Session, limit: int = 100):
     return db.query(models.User).limit(limit).all()
 
 def get_user_by_id(db: Session, user_id: str):
-    return db.query(models.User).filter(models.User.UserID == user_id).first()
+    return db.query(models.User).filter(cast(models.User.UserID, UUID) == user_id).first()
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.Email == email).first()
@@ -123,8 +126,12 @@ def get_wet_leaves(db: Session, limit: int = 100):
 def get_wet_leaves_by_id(db: Session, wet_leaves_id: int):
     return db.query(models.WetLeaves).filter(models.WetLeaves.WetLeavesID == wet_leaves_id).first()
 
-def get_wet_leaves_by_user_id(db: Session,user_id: str):
-    return db.query(models.WetLeaves).filter(models.WetLeaves.UserID == user_id).all()
+def get_wet_leaves_by_user_id(db: Session, user_id: str):
+    return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
+
+def get_wet_leaves_by_user_and_id(db: Session, user_id: str, wet_leaves_id: int):
+    return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id,models.WetLeaves.WetLeavesID == wet_leaves_id).first()
+
 
 def delete_wet_leaves_by_id(db: Session, wet_leaves_id: int):
     wet_leaves = db.query(models.WetLeaves).filter(models.WetLeaves.WetLeavesID == wet_leaves_id).first()
@@ -156,6 +163,12 @@ def update_wet_leaves_status(db: Session, wet_leaves_id: int, status_update: sch
 
 # dry leaves
 def create_dry_leaves(db: Session, dry_leaves: schemas.DryLeavesCreate):
+    # Validate the wet leaves ID
+    wet_leaves = get_wet_leaves_by_user_and_id(db, dry_leaves.UserID, dry_leaves.WetLeavesID)
+    
+    if not wet_leaves:
+        raise HTTPException(status_code=404, detail="Wet leaves not found or do not belong to the user")
+
     db_dry_leaves = models.DryLeaves(**dry_leaves.dict())
     db.add(db_dry_leaves)
     db.commit()
@@ -168,8 +181,8 @@ def get_dry_leaves(db: Session, limit: int = 100):
 def get_dry_leaves_by_id(db: Session, dry_leaves_id: int):
     return db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
 
-def get_dry_leaves_by_user_id(db: Session, user_id: str):
-    return db.query(models.DryLeaves).filter(models.DryLeaves.UserID == user_id).all()
+def get_dry_leaves_by_user_and_id(db: Session, user_id: str, dry_leaves_id: int):
+    return db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id, models.DryLeaves.DryLeavesID == dry_leaves_id).first()
 
 def delete_dry_leaves_by_id(db: Session, dry_leaves_id: int):
     dry_leaves = db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
@@ -201,7 +214,17 @@ def update_dry_leaves_status(db: Session, dry_leaves_id: int, status_update: sch
 
 
 #flour
-def create_flour(db: Session, flour: schemas.WetLeavesCreate):
+def create_flour(db: Session, flour: schemas.FlourCreate):
+    # Validate the dry leaves ID
+    dry_leaves = get_dry_leaves_by_user_and_id(db, flour.UserID, flour.DryLeavesID)
+    if not dry_leaves:
+        raise HTTPException(status_code=404, detail="Dry leaves not found or do not belong to the user")
+
+    # Validate the wet leaves ID
+    wet_leaves = get_wet_leaves_by_user_and_id(db, flour.UserID, flour.WetLeavesID)
+    if not wet_leaves:
+        raise HTTPException(status_code=404, detail="Wet leaves not found or do not belong to the user")
+
     db_flour = models.Flour(**flour.dict())
     db.add(db_flour)
     db.commit()

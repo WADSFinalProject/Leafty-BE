@@ -252,7 +252,7 @@ def update_wet_leaves_status(wet_leaves_id: int, status_update: schemas.WetLeave
     return updated_wet_leaves
  
 # dry leaves
-@app.post("/dryleaves/post", response_model=schemas.DryLeaves,tags=["DryLeaves"])
+@app.post("/dryleaves/post", response_model=schemas.DryLeaves, tags=["DryLeaves"])
 def create_dry_leaves(dry_leaves: schemas.DryLeavesCreate, db: Session = Depends(get_db)):
     return crud.create_dry_leaves(db=db, dry_leaves=dry_leaves)
 
@@ -271,8 +271,9 @@ def get_dry_leaves_id(dry_leaves_id: int,db: Session = Depends(get_db)):
 def get_dry_leaves_by_user(user_id: str, db: Session = Depends(get_db)):
     dry_leaves = crud.get_dry_leaves_by_user_id(db, user_id)
     if not dry_leaves:
-        raise HTTPException(status_code=404, detail="dry leaves not found")
+        raise HTTPException(status_code=404, detail="Dry leaves not found")
     return dry_leaves
+
 
 @app.delete("/dryleaves/delete/{dry_leaves_id}", response_class=JSONResponse,tags=["DryLeaves"])
 def delete_dry_leaves_by_id(dry_leaves_id: int, db: Session = Depends(get_db)):
@@ -297,7 +298,7 @@ def update_dry_leaves_status(dry_leaves_id: int, status_update: schemas.DryLeave
     return updated_dry_leaves
 
 #flour
-@app.post("/flour/post", response_model=schemas.Flour,tags=["Flour"])
+@app.post("/flour/post", response_model=schemas.Flour, tags=["Flour"])
 def create_flour(flour: schemas.FlourCreate, db: Session = Depends(get_db)):
     return crud.create_flour(db=db, flour=flour)
 
