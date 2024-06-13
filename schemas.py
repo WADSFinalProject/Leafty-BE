@@ -115,7 +115,6 @@ class WetLeavesStatusUpdate(BaseModel):
 class FlourBase(BaseModel):
     UserID: UUID4
     DryLeavesID: int
-    WetLeavesID: int
     Flour_Weight: float
     Expiration: Optional[datetime]
     Status: Optional[str] = "Awaiting"

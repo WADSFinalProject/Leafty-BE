@@ -178,6 +178,9 @@ def get_dry_leaves(db: Session, limit: int = 100):
 def get_dry_leaves_by_id(db: Session, dry_leaves_id: int):
     return db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
 
+def get_dry_leaves_by_user_id(db: Session, user_id: str):
+    return db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id).all()
+
 def get_dry_leaves_by_user_and_id(db: Session, user_id: str, dry_leaves_id: int):
     return db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id, models.DryLeaves.DryLeavesID == dry_leaves_id).first()
 
@@ -215,11 +218,6 @@ def create_flour(db: Session, flour: schemas.FlourCreate):
     dry_leaves = get_dry_leaves_by_user_and_id(db, flour.UserID, flour.DryLeavesID)
     if not dry_leaves:
         raise HTTPException(status_code=404, detail="Dry leaves not found or do not belong to the user")
-
-    # Validate the wet leaves ID
-    wet_leaves = get_wet_leaves_by_user_and_id(db, flour.UserID, flour.WetLeavesID)
-    if not wet_leaves:
-        raise HTTPException(status_code=404, detail="Wet leaves not found or do not belong to the user")
 
     db_flour = models.Flour(**flour.dict())
     db.add(db_flour)

@@ -74,7 +74,6 @@ class Flour(Base):
     FlourID = Column(Integer, primary_key=True, autoincrement=True)
     DryLeavesID = Column(Integer, ForeignKey("dry_leaves.DryLeavesID"))
     UserID = Column(String(36), ForeignKey("users.UserID"))
-    WetLeavesID = Column(Integer, ForeignKey("wet_leaves.WetLeavesID"))
     Flour_Weight = Column(Float)
     Expiration = Column(DateTime, nullable=True)
     Status = Column(String(50), default="Awaiting")
