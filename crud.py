@@ -6,25 +6,23 @@ import models
 import schemas
 import uuid
 
-#sessions
-def create_session(db: Session, session_id:str, user_id: str):
-    db_session = models.SessionData(session_id=session_id, user_id = user_id)
+# sessions
+def create_session(db: Session, session_id: str, user_id: str):
+    db_session = models.SessionData(session_id=session_id, user_id=user_id)
     db.add(db_session)
     db.commit()
 
 def check_session(db: Session, session_id: str):
-    db_session = db.query(models.SessionData).filter(session_id = session_id)
+    db_session = db.query(models.SessionData).filter(session_id=session_id)
     return db_session
 
 def delete_session(db: Session):
     db.query(models.SessionData).delete()
     db.commit()
 
-#users
+# users
 def create_user(db: Session, user: schemas.UserCreate):
-  
     user_uuid = str(uuid.uuid4())
-   
     db_user = models.User(**user.dict(), UserID=user_uuid)
     db.add(db_user)
     db.commit()
@@ -49,7 +47,7 @@ def update_user(db: Session, user_id: uuid.UUID, user_update: schemas.UserUpdate
         return None
     user.Username = user_update.Username
     user.Email = user_update.Email
-    user.Password = user_update.Password 
+    user.Password = user_update.Password
     db.commit()
     db.refresh(user)
     return user
@@ -93,7 +91,7 @@ def delete_role_by_id(db: Session, role_id: str):
         return True
     return False
 
-#courier
+# courier
 def create_courier(db: Session, courier: schemas.CourierCreate):
     db_courier = models.Courier(**courier.dict())
     db.add(db_courier)
@@ -112,7 +110,7 @@ def delete_courier(db: Session, courier_id: int):
         return True
     return False
 
-#wet leaves
+# wet leaves
 def create_wet_leaves(db: Session, wet_leaves: schemas.WetLeavesCreate):
     db_wet_leaves = models.WetLeaves(**wet_leaves.dict())
     db.add(db_wet_leaves)
@@ -130,8 +128,7 @@ def get_wet_leaves_by_user_id(db: Session, user_id: str):
     return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
 
 def get_wet_leaves_by_user_and_id(db: Session, user_id: str, wet_leaves_id: int):
-    return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id,models.WetLeaves.WetLeavesID == wet_leaves_id).first()
-
+    return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id, models.WetLeaves.WetLeavesID == wet_leaves_id).first()
 
 def delete_wet_leaves_by_id(db: Session, wet_leaves_id: int):
     wet_leaves = db.query(models.WetLeaves).filter(models.WetLeaves.WetLeavesID == wet_leaves_id).first()
@@ -212,8 +209,7 @@ def update_dry_leaves_status(db: Session, dry_leaves_id: int, status_update: sch
     db.refresh(db_dry_leaves)
     return db_dry_leaves
 
-
-#flour
+# flour
 def create_flour(db: Session, flour: schemas.FlourCreate):
     # Validate the dry leaves ID
     dry_leaves = get_dry_leaves_by_user_and_id(db, flour.UserID, flour.DryLeavesID)
@@ -270,12 +266,47 @@ def update_flour_status(db: Session, flour_id: int, status_update: schemas.Flour
 
 # shipment
 def create_shipment(db: Session, shipment: schemas.ShipmentCreate):
-    db_shipment = models.Shipment(**shipment.dict())
+    db_shipment = models.Shipment(
+        CourierID=shipment.CourierID,
+        UserID=shipment.UserID,
+        ShipmentQuantity=shipment.ShipmentQuantity,
+        ShipmentDate=shipment.ShipmentDate,
+        Check_in_Date=shipment.Check_in_Date,
+        Check_in_Quantity=shipment.Check_in_Quantity,
+        Harbor_Reception_File=shipment.Harbor_Reception_File,
+        Rescalled_Weight=shipment.Rescalled_Weight,
+        Rescalled_Date=shipment.Rescalled_Date,
+        Centra_Reception_File=shipment.Centra_Reception_File,
+    )
     db.add(db_shipment)
     db.commit()
     db.refresh(db_shipment)
-    return db_shipment
-    
+
+    for flour_id in shipment.FlourIDs:
+        flour = db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
+        if flour:
+            db_shipment.flours.append(flour)
+    db.commit()
+    db.refresh(db_shipment)
+
+    # Include FlourIDs in the response
+    shipment_data = schemas.Shipment(
+        ShipmentID=db_shipment.ShipmentID,
+        CourierID=db_shipment.CourierID,
+        UserID=db_shipment.UserID,
+        FlourIDs=[flour.FlourID for flour in db_shipment.flours],
+        ShipmentQuantity=db_shipment.ShipmentQuantity,
+        ShipmentDate=db_shipment.ShipmentDate,
+        Check_in_Date=db_shipment.Check_in_Date,
+        Check_in_Quantity=db_shipment.Check_in_Quantity,
+        Harbor_Reception_File=db_shipment.Harbor_Reception_File,
+        Rescalled_Weight=db_shipment.Rescalled_Weight,
+        Rescalled_Date=db_shipment.Rescalled_Date,
+        Centra_Reception_File=db_shipment.Centra_Reception_File,
+    )
+
+    return shipment_data
+
 def get_shipment(db: Session, limit: int = 100):
     return db.query(models.Shipment).limit(limit).all()
 
@@ -301,8 +332,12 @@ def update_shipment(db: Session, shipment_id: int, shipment_update: schemas.Ship
         return None
     if shipment_update.CourierID is not None:
         db_shipment.CourierID = shipment_update.CourierID
-    if shipment_update.FlourID is not None:
-        db_shipment.FlourID = shipment_update.FlourID
+    if shipment_update.FlourIDs is not None:
+        db_shipment.flours = []
+        for flour_id in shipment_update.FlourIDs:
+            flour = db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
+            if flour:
+                db_shipment.flours.append(flour)
     if shipment_update.ShipmentQuantity is not None:
         db_shipment.ShipmentQuantity = shipment_update.ShipmentQuantity
     if shipment_update.Check_in_Quantity is not None:
@@ -317,7 +352,6 @@ def update_shipment(db: Session, shipment_id: int, shipment_update: schemas.Ship
     db.commit()
     db.refresh(db_shipment)
     return db_shipment
-
 
 # location
 def create_location(db: Session, location: schemas.LocationCreate):

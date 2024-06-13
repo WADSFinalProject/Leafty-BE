@@ -1,9 +1,16 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTime, Enum, BigInteger
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTime, Enum, BigInteger, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID
 
 Base = declarative_base()
+
+# Association table for many-to-many relationship between Shipments and Flour
+shipment_flour_association = Table(
+    'shipment_flour_association', Base.metadata,
+    Column('shipment_id', Integer, ForeignKey('shipments.ShipmentID')),
+    Column('flour_id', Integer, ForeignKey('flour.FlourID'))
+)
 
 class SessionData(Base):
     __tablename__ = "sessions"
@@ -78,7 +85,6 @@ class Shipment(Base):
     ShipmentID = Column(Integer, primary_key=True, autoincrement=True)
     CourierID = Column(Integer, ForeignKey("couriers.CourierID"))
     UserID = Column(String(36), ForeignKey("users.UserID"))
-    FlourID = Column(Integer, ForeignKey("flour.FlourID"))
     ShipmentQuantity = Column(Integer)
     ShipmentDate = Column(DateTime)
     Check_in_Date = Column(DateTime)
@@ -87,3 +93,5 @@ class Shipment(Base):
     Rescalled_Weight = Column(Float)
     Rescalled_Date = Column(DateTime)
     Centra_Reception_File = Column(String(50))
+    
+    flours = relationship("Flour", secondary=shipment_flour_association, backref="shipments")

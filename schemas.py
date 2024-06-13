@@ -1,5 +1,5 @@
 from pydantic import BaseModel, UUID4
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class RoleBase(BaseModel):
@@ -139,7 +139,7 @@ class FlourStatusUpdate(BaseModel):
 class ShipmentBase(BaseModel):
     CourierID: int
     UserID: UUID4
-    FlourID: int
+    FlourIDs: List[int]  # Modified to accept a list of Flour IDs
     ShipmentQuantity: int
     ShipmentDate: datetime
     Check_in_Date: Optional[datetime]
@@ -149,13 +149,12 @@ class ShipmentBase(BaseModel):
     Rescalled_Date: Optional[datetime]
     Centra_Reception_File: Optional[str]
 
-
 class ShipmentCreate(ShipmentBase):
     pass
 
 class ShipmentUpdate(BaseModel):
     CourierID: Optional[int] = None
-    FlourID: Optional[int] = None
+    FlourIDs: Optional[List[int]] = None  # Modified to accept a list of Flour IDs
     ShipmentQuantity: Optional[int] = None
     Check_in_Quantity: Optional[int] = None
     Harbor_Reception_File: Optional[str] = None
