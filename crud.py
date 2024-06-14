@@ -312,7 +312,19 @@ def get_shipment_by_id(db: Session, shipment_id: int):
     return db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
 
 def get_shipment_by_user_id(db: Session, user_id: str):
-    return db.query(models.Shipment).filter(models.Shipment.UserID == user_id).all()
+    shipments = db.query(models.Shipment).filter(models.Shipment.UserID == user_id).all()
+    shipment_data = []
+    for shipment in shipments:
+        shipment_dict = {
+            "ShipmentID": shipment.ShipmentID,
+            "CourierID": shipment.CourierID,
+            "UserID": shipment.UserID,
+            "FlourIDs": [flour.FlourID for flour in shipment.flours],
+            "ShipmentQuantity": shipment.ShipmentQuantity,
+            
+        }
+        shipment_data.append(shipment_dict)
+    return shipment_data
 
 def delete_shipment_by_id(db: Session, shipment_id: int):
     shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()

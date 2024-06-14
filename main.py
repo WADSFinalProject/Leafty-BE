@@ -357,11 +357,11 @@ def get_shipment_by_id(shipment_id: int, db: Session = Depends(get_db)):
     return shipment
 
 @app.get("/shipment/get_by_user/{user_id}", response_model=List[schemas.Shipment], tags=["Shipment"])
-def get_Shipment_by_user(user_id: str, db: Session = Depends(get_db)):
-    shipment = crud.get_shipment_by_user_id(db, user_id)
-    if not shipment:
-        raise HTTPException(status_code=404, detail="shipment not found")
-    return shipment
+def get_shipment_by_user(user_id: str, db: Session = Depends(get_db)):
+    shipment_data = crud.get_shipment_by_user_id(db, user_id)
+    if not shipment_data:
+        raise HTTPException(status_code=404, detail="shipments not found")
+    return shipment_data
 
 @app.put("/shipment/put/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
 def update_shipment(shipment_id: int, shipment_update: schemas.ShipmentUpdate, db: Session = Depends(get_db)):
