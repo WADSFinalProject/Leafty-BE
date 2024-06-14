@@ -306,7 +306,18 @@ def create_shipment(db: Session, shipment: schemas.ShipmentCreate):
     return shipment_data
 
 def get_shipment(db: Session, limit: int = 100):
-    return db.query(models.Shipment).limit(limit).all()
+    shipments = db.query(models.Shipment).limit(limit).all()
+    shipment_data = []
+    for shipment in shipments:
+        shipment_dict = {
+            "ShipmentID": shipment.ShipmentID,
+            "CourierID": shipment.CourierID,
+            "UserID": shipment.UserID,
+            "FlourIDs": [flour.FlourID for flour in shipment.flours],  # Ensure FlourIDs are included
+            "ShipmentQuantity": shipment.ShipmentQuantity
+        }
+        shipment_data.append(shipment_dict)
+    return shipment_data
 
 def get_shipment_by_id(db: Session, shipment_id: int):
     return db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
