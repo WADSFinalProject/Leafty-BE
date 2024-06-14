@@ -268,13 +268,13 @@ def create_shipment(db: Session, shipment: schemas.ShipmentCreate):
         CourierID=shipment.CourierID,
         UserID=shipment.UserID,
         ShipmentQuantity=shipment.ShipmentQuantity,
-        ShipmentDate=shipment.ShipmentDate,
-        Check_in_Date=shipment.Check_in_Date,
-        Check_in_Quantity=shipment.Check_in_Quantity,
-        Harbor_Reception_File=shipment.Harbor_Reception_File,
-        Rescalled_Weight=shipment.Rescalled_Weight,
-        Rescalled_Date=shipment.Rescalled_Date,
-        Centra_Reception_File=shipment.Centra_Reception_File,
+        # ShipmentDate=shipment.ShipmentDate,
+        # Check_in_Date=shipment.Check_in_Date,
+        # Check_in_Quantity=shipment.Check_in_Quantity,
+        # Harbor_Reception_File=shipment.Harbor_Reception_File,
+        # Rescalled_Weight=shipment.Rescalled_Weight,
+        # Rescalled_Date=shipment.Rescalled_Date,
+        # Centra_Reception_File=shipment.Centra_Reception_File,
     )
     db.add(db_shipment)
     db.commit()
@@ -294,13 +294,13 @@ def create_shipment(db: Session, shipment: schemas.ShipmentCreate):
         UserID=db_shipment.UserID,
         FlourIDs=[flour.FlourID for flour in db_shipment.flours],
         ShipmentQuantity=db_shipment.ShipmentQuantity,
-        ShipmentDate=db_shipment.ShipmentDate,
-        Check_in_Date=db_shipment.Check_in_Date,
-        Check_in_Quantity=db_shipment.Check_in_Quantity,
-        Harbor_Reception_File=db_shipment.Harbor_Reception_File,
-        Rescalled_Weight=db_shipment.Rescalled_Weight,
-        Rescalled_Date=db_shipment.Rescalled_Date,
-        Centra_Reception_File=db_shipment.Centra_Reception_File,
+        # ShipmentDate=db_shipment.ShipmentDate,
+        # Check_in_Date=db_shipment.Check_in_Date,
+        # Check_in_Quantity=db_shipment.Check_in_Quantity,
+        # Harbor_Reception_File=db_shipment.Harbor_Reception_File,
+        # Rescalled_Weight=db_shipment.Rescalled_Weight,
+        # Rescalled_Date=db_shipment.Rescalled_Date,
+        # Centra_Reception_File=db_shipment.Centra_Reception_File,
     )
 
     return shipment_data

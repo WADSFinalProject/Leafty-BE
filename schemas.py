@@ -140,13 +140,13 @@ class ShipmentBase(BaseModel):
     UserID: UUID4
     FlourIDs: List[int]  # Modified to accept a list of Flour IDs
     ShipmentQuantity: int
-    ShipmentDate: datetime
-    Check_in_Date: Optional[datetime]
-    Check_in_Quantity: Optional[int]
-    Harbor_Reception_File: Optional[str]
-    Rescalled_Weight: Optional[float]
-    Rescalled_Date: Optional[datetime]
-    Centra_Reception_File: Optional[str]
+    # ShipmentDate: Optional[datetime] = None 
+    # Check_in_Date: Optional[datetime]= None
+    # Check_in_Quantity: Optional[int]= None
+    # Harbor_Reception_File: Optional[str]= None
+    # Rescalled_Weight: Optional[float]= None
+    # Rescalled_Date: Optional[datetime]= None
+    # Centra_Reception_File: Optional[str]= None
 
 class ShipmentCreate(ShipmentBase):
     pass
