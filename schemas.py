@@ -141,8 +141,8 @@ class ShipmentBase(BaseModel):
     FlourIDs: List[int]  # Modified to accept a list of Flour IDs
     ShipmentQuantity: int
     ShipmentDate: Optional[datetime] = None 
-    # Check_in_Date: Optional[datetime]= None
-    # Check_in_Quantity: Optional[int]= None
+    Check_in_Date: Optional[datetime]= None
+    Check_in_Quantity: Optional[int]= None
     # Harbor_Reception_File: Optional[str]= None
     # Rescalled_Weight: Optional[float]= None
     # Rescalled_Date: Optional[datetime]= None

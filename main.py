@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import crud
 import models
 import schemas
+import bcrypt
+from typing import List
 from database import SessionLocal, engine
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from fastapi_sessions.session_verifier import SessionVerifier
@@ -366,6 +368,35 @@ def get_shipment_by_user(user_id: str, db: Session = Depends(get_db)):
     if not shipment_data:
         raise HTTPException(status_code=404, detail="shipments not found")
     return shipment_data
+
+@app.get("/shipments/ids", response_model=List[int], tags=["Shipment"])
+def get_all_shipment_ids(db: Session = Depends(get_db)):
+    shipments = crud.get_all_shipment_ids(db)
+    print(f"All shipment IDs: {[shipment.ShipmentID for shipment in shipments]}")
+    return [shipment.ShipmentID for shipment in shipments]
+
+# Endpoint to compare shipment IDs
+@app.get("/check_shipment_ids", response_model=List[str])
+def check_shipment_ids(db: Session = Depends(get_db)):
+    shipment_ids = crud.get_shipment_ids_with_date_but_no_checkin(db)
+    print(f"Fetched shipment IDs: {shipment_ids}")
+
+    # Example hashed ID to compare
+    known_shipment_id = "known_shipment_id"
+    hashed_shipment_id = bcrypt.hashpw(known_shipment_id.encode('utf-8'), bcrypt.gensalt())
+    print(f"Hashed shipment ID: {hashed_shipment_id}")
+
+    def brute_force_check(shipment_id):
+        if bcrypt.checkpw(shipment_id.encode('utf-8'), hashed_shipment_id):
+            return shipment_id
+        else:
+            print(f"No match for shipment ID: {shipment_id}")
+            return None
+
+    valid_shipment_ids = [brute_force_check(str(shipment_id)) for shipment_id in shipment_ids]
+    valid_shipment_ids = list(filter(None, valid_shipment_ids))  # Filter out None values
+    print(f"Valid shipment IDs: {valid_shipment_ids}")
+    return valid_shipment_ids
 
 @app.put("/shipment/put/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
 def update_shipment(shipment_id: int, shipment_update: schemas.ShipmentUpdate, db: Session = Depends(get_db)):

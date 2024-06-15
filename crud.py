@@ -2,6 +2,7 @@ from sqlalchemy import cast
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends
+from typing import List
 import models
 import schemas
 import uuid
@@ -324,7 +325,21 @@ def get_shipment(db: Session, limit: int = 100):
     return shipment_data
 
 def get_shipment_by_id(db: Session, shipment_id: int):
-    return db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    if not shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    return schemas.Shipment(
+        ShipmentID=shipment.ShipmentID,
+        CourierID=shipment.CourierID,
+        UserID=shipment.UserID,
+        FlourIDs=[flour.FlourID for flour in shipment.flours],
+        ShipmentQuantity=shipment.ShipmentQuantity,
+        ShipmentDate=shipment.ShipmentDate,
+        # Include other fields as necessary
+    )
+
+def get_all_shipment_ids(db: Session):
+    return db.query(models.Shipment).all()
 
 def get_shipment_by_user_id(db: Session, user_id: str):
     shipments = db.query(models.Shipment).filter(models.Shipment.UserID == user_id).all()
@@ -341,6 +356,14 @@ def get_shipment_by_user_id(db: Session, user_id: str):
         }
         shipment_data.append(shipment_dict)
     return shipment_data
+
+def get_shipment_ids_with_date_but_no_checkin(db: Session) -> List[str]:
+    shipments = db.query(models.Shipment.ShipmentID).filter(
+        models.Shipment.ShipmentDate.isnot(None),
+        models.Shipment.Check_in_Date.is_(None)
+    ).all()
+    return [shipment[0] for shipment in shipments]  # Extracting the IDs from the tuples
+
 
 def delete_shipment_by_id(db: Session, shipment_id: int):
     shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
