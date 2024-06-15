@@ -7,9 +7,17 @@ import models
 import schemas
 import uuid
 
-# sessions
-def create_session(db: Session, session_id: str, user_id: str):
-    db_session = models.SessionData(session_id=session_id, user_id=user_id)
+#sessions
+def create_session(db: Session, session_id:str, user_id: str):
+    user = db.query(models.User).filter(models.User.UserID == user_id).first()
+    
+    if user is None:
+        raise ValueError(f"No user found with user_id: {user_id}")
+    
+    user_role = user.RoleID
+    user_email = user.Email
+
+    db_session = models.SessionData(session_id=session_id, user_id = user_id, user_role = user_role, user_email = user_email)
     db.add(db_session)
     db.commit()
 
