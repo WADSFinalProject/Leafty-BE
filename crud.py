@@ -102,6 +102,9 @@ def create_courier(db: Session, courier: schemas.CourierCreate):
 def get_couriers(db: Session):
     return db.query(models.Courier).all()
 
+def get_courier_by_id(db: Session, courier_id: int):
+    return db.query(models.Courier).filter(models.Courier.CourierID == courier_id).first()
+
 def delete_courier(db: Session, courier_id: int):
     courier_delete = db.query(models.Courier).filter(models.Courier.CourierID == courier_id).first()
     if courier_delete:

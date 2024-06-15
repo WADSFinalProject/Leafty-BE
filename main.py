@@ -196,6 +196,10 @@ def create_courier(courier: schemas.CourierCreate, db: Session = Depends(get_db)
 def get_courier(db: Session = Depends(get_db)):
     return crud.get_couriers(db)
 
+@app.get("/courier/get/{courier_id}", response_model=schemas.Courier, tags=["Courier"])
+def get_courier_by_courier_id(courier_id:int, db: Session = Depends(get_db)):
+    return crud.get_courier_by_id(db, courier_id)   
+
 @app.delete("/courier/delete/{courier_id}", response_class=JSONResponse, tags=["Courier"])
 def delete_courier(courier_id: int, db: Session = Depends(get_db)):
     delete = crud.delete_courier(db=db, courier_id=courier_id)
