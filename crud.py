@@ -377,6 +377,25 @@ def update_shipment(db: Session, shipment_id: int, shipment_update: schemas.Ship
     db.refresh(db_shipment)
     return db_shipment
 
+def update_shipment_date(db: Session, shipment_id: int, shipment_date_update: schemas.ShipmentDateUpdate):
+    db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    if not db_shipment:
+        return None
+    db_shipment.ShipmentDate = shipment_date_update.ShipmentDate
+    db.commit()
+    db.refresh(db_shipment)
+
+    # Ensure FlourIDs are included in the response
+    shipment_data = schemas.Shipment(
+        ShipmentID=db_shipment.ShipmentID,
+        CourierID=db_shipment.CourierID,
+        UserID=db_shipment.UserID,
+        FlourIDs=[flour.FlourID for flour in db_shipment.flours],
+        ShipmentQuantity=db_shipment.ShipmentQuantity,
+        ShipmentDate=db_shipment.ShipmentDate,
+    )
+    return shipment_data
+
 # location
 def create_location(db: Session, location: schemas.LocationCreate):
     db_location = models.Location(**location.dict())

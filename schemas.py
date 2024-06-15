@@ -140,7 +140,7 @@ class ShipmentBase(BaseModel):
     UserID: UUID4
     FlourIDs: List[int]  # Modified to accept a list of Flour IDs
     ShipmentQuantity: int
-    # ShipmentDate: Optional[datetime] = None 
+    ShipmentDate: Optional[datetime] = None 
     # Check_in_Date: Optional[datetime]= None
     # Check_in_Quantity: Optional[int]= None
     # Harbor_Reception_File: Optional[str]= None
@@ -162,6 +162,9 @@ class ShipmentUpdate(BaseModel):
     
 class Shipment(ShipmentBase):
     ShipmentID: int
+
+class ShipmentDateUpdate(BaseModel):
+    ShipmentDate: datetime
 
     class Config:
         orm_mode = True
