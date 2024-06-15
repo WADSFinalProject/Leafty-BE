@@ -81,14 +81,14 @@ def format_large_number(number):
 @app.post("/create_session/{user_id}", tags=["Sessions"])
 async def create_session(user_id: str, response: Response, db: Session = Depends(get_db)):
     session = uuid4()
-    data = SessionData(user_id=user_id)
+    user = crud.get_user_by_id(db, user_id)
+    data = SessionData(user_id=user_id, user_role=user.RoleID, user_email=user.Email)
 
     await backend.create(session, data)
     cookie.attach_to_response(response, session)
 
     response.headers["Set-Cookie"] += "; SameSite=None"
 
-    # response.set_cookie("session", session, samesite="none", secure=True)
 
     crud.create_session(db, session, user_id)
 

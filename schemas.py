@@ -7,6 +7,8 @@ class RoleBase(BaseModel):
     
 class SessionData(BaseModel):
     user_id: str
+    user_role: int
+    user_email: str
 
 class RoleCreate(RoleBase):
     pass
@@ -22,6 +24,7 @@ class UserBase(BaseModel):
     Email: str
     PhoneNumber: Optional[int]
     RoleID: int
+    Password: str
 
 class UserCreate(UserBase):
     Password: str
