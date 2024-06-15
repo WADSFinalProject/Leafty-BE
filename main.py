@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Request, Response, status, 
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
+import uvicorn
 import uuid
 from BasicVerifier import BasicVerifier
 from fastapi_sessions.backends.implementations import InMemoryBackend
@@ -443,3 +444,6 @@ def delete_location_by_id(location_id: int, db: Session = Depends(get_db)):
         return {"message": "location deleted successfully"}
     else:
         return {"message": "location not found or deletion failed"}
+    
+if __name__ == '__main__':
+    uvicorn.run("main:app", host = "0.0.0.0", reload=True)
