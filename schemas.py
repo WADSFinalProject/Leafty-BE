@@ -166,5 +166,9 @@ class Shipment(ShipmentBase):
 class ShipmentDateUpdate(BaseModel):
     ShipmentDate: datetime
 
+class ShipmentCheckInUpdate(BaseModel):
+    Check_in_Date: Optional[datetime] = None
+    Check_in_Quantity: Optional[int] = None
+
     class Config:
         orm_mode = True

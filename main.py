@@ -413,6 +413,13 @@ def update_shipment_date(shipment_id: int, shipment_date_update: schemas.Shipmen
         raise HTTPException(status_code=404, detail="Shipment not found")
     return updated_shipment
 
+@app.put("/shipment/update_check_in/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
+def update_shipment_check_in(shipment_id: int, check_in_update: schemas.ShipmentCheckInUpdate, db: Session = Depends(get_db)):
+    updated_shipment = crud.update_shipment_check_in(db=db, shipment_id=shipment_id, check_in_update=check_in_update)
+    if not updated_shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    return updated_shipment
+
 @app.delete('/shipment/delete/{shipment_id}', tags=["Shipment"])
 def delete_shipment_by_id(shipment_id: int, db: Session = Depends(get_db)):
     delete = crud.delete_shipment_by_id(db=db, shipment_id=shipment_id)

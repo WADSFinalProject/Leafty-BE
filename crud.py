@@ -319,7 +319,9 @@ def get_shipment(db: Session, limit: int = 100):
             "UserID": shipment.UserID,
             "FlourIDs": [flour.FlourID for flour in shipment.flours],  # Ensure FlourIDs are included
             "ShipmentQuantity": shipment.ShipmentQuantity,
-            "ShipmentDate": shipment.ShipmentDate
+            "ShipmentDate": shipment.ShipmentDate,
+            "Check_in_Date": shipment.Check_in_Date,
+            "Check_in_Quantity": shipment.Check_in_Quantity
         }
         shipment_data.append(shipment_dict)
     return shipment_data
@@ -335,6 +337,8 @@ def get_shipment_by_id(db: Session, shipment_id: int):
         FlourIDs=[flour.FlourID for flour in shipment.flours],
         ShipmentQuantity=shipment.ShipmentQuantity,
         ShipmentDate=shipment.ShipmentDate,
+        Check_in_Date=shipment.Check_in_Date,
+        Check_in_Quantity=shipment.Check_in_Quantity
         # Include other fields as necessary
     )
 
@@ -351,7 +355,9 @@ def get_shipment_by_user_id(db: Session, user_id: str):
             "UserID": shipment.UserID,
             "FlourIDs": [flour.FlourID for flour in shipment.flours],
             "ShipmentQuantity": shipment.ShipmentQuantity,
-            "ShipmentDate": shipment.ShipmentDate
+            "ShipmentDate": shipment.ShipmentDate,
+            "Check_in_Date": shipment.Check_in_Date,
+            "Check_in_Quantity": shipment.Check_in_Quantity
             
         }
         shipment_data.append(shipment_dict)
@@ -418,6 +424,31 @@ def update_shipment_date(db: Session, shipment_id: int, shipment_date_update: sc
         FlourIDs=[flour.FlourID for flour in db_shipment.flours],
         ShipmentQuantity=db_shipment.ShipmentQuantity,
         ShipmentDate=db_shipment.ShipmentDate,
+    )
+    return shipment_data
+
+def update_shipment_check_in(db: Session, shipment_id: int, check_in_update: schemas.ShipmentCheckInUpdate):
+    db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    if not db_shipment:
+        return None
+    if check_in_update.Check_in_Date is not None:
+        db_shipment.Check_in_Date = check_in_update.Check_in_Date
+    if check_in_update.Check_in_Quantity is not None:
+        db_shipment.Check_in_Quantity = check_in_update.Check_in_Quantity
+
+    db.commit()
+    db.refresh(db_shipment)
+
+    # Ensure FlourIDs are included in the response
+    shipment_data = schemas.Shipment(
+        ShipmentID=db_shipment.ShipmentID,
+        CourierID=db_shipment.CourierID,
+        UserID=db_shipment.UserID,
+        FlourIDs=[flour.FlourID for flour in db_shipment.flours],
+        ShipmentQuantity=db_shipment.ShipmentQuantity,
+        ShipmentDate=db_shipment.ShipmentDate,
+        Check_in_Date=db_shipment.Check_in_Date,
+        Check_in_Quantity=db_shipment.Check_in_Quantity,
     )
     return shipment_data
 
