@@ -317,7 +317,8 @@ def get_shipment(db: Session, limit: int = 100):
             "CourierID": shipment.CourierID,
             "UserID": shipment.UserID,
             "FlourIDs": [flour.FlourID for flour in shipment.flours],  # Ensure FlourIDs are included
-            "ShipmentQuantity": shipment.ShipmentQuantity
+            "ShipmentQuantity": shipment.ShipmentQuantity,
+            "ShipmentDate": shipment.ShipmentDate
         }
         shipment_data.append(shipment_dict)
     return shipment_data
@@ -335,6 +336,7 @@ def get_shipment_by_user_id(db: Session, user_id: str):
             "UserID": shipment.UserID,
             "FlourIDs": [flour.FlourID for flour in shipment.flours],
             "ShipmentQuantity": shipment.ShipmentQuantity,
+            "ShipmentDate": shipment.ShipmentDate
             
         }
         shipment_data.append(shipment_dict)
