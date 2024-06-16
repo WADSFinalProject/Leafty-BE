@@ -69,18 +69,26 @@ cookie = SessionCookie(
     cookie_params=cookie_params,
 )
 
+def format_large_number(number):
+    if number < 1000:
+        return str(number)
+    elif number < 1_000_000:
+        return f"{number // 1000},{number % 1000}k"
+    else:
+        return f"{number // 1_000_000},{(number // 1000) % 1000}m"
+    
 # Sessions
 @app.post("/create_session/{user_id}", tags=["Sessions"])
 async def create_session(user_id: str, response: Response, db: Session = Depends(get_db)):
     session = uuid4()
-    data = SessionData(user_id=user_id)
+    user = crud.get_user_by_id(db, user_id)
+    data = SessionData(user_id=user_id, user_role=user.RoleID, user_email=user.Email)
 
     await backend.create(session, data)
     cookie.attach_to_response(response, session)
 
     response.headers["Set-Cookie"] += "; SameSite=None"
 
-    # response.set_cookie("session", session, samesite="none", secure=True)
 
     crud.create_session(db, session, user_id)
 
@@ -462,5 +470,46 @@ def delete_location_by_id(location_id: int, db: Session = Depends(get_db)):
     else:
         return {"message": "location not found or deletion failed"}
     
+@app.get('/statistics/all', tags=["Statistics"])
+def retrieve_all_stats(db: Session = Depends(get_db)):
+    sum_wet_leaves = crud.sum_total_wet_leaves(db)
+    sum_dry_leaves = crud.sum_total_dry_leaves(db)
+    sum_flour = crud.sum_total_flour(db)
+    sum_shipment_quantity = crud.sum_total_shipment_quantity(db)
+    
+    return {
+        "sum_wet_leaves": format_large_number(sum_wet_leaves),
+        "sum_dry_leaves": format_large_number(sum_dry_leaves),
+        "sum_flour": format_large_number(sum_flour),
+        "sum_shipment_quantity": format_large_number(sum_shipment_quantity)
+    }
+
+@app.get('/statistics/all_no_format', tags=["Statistics"])
+def retrieve_all_stats_no_format(db: Session = Depends(get_db)):
+    sum_wet_leaves = crud.sum_total_wet_leaves(db)
+    sum_dry_leaves = crud.sum_total_dry_leaves(db)
+    sum_flour = crud.sum_total_flour(db)
+    sum_shipment_quantity = crud.sum_total_shipment_quantity(db)
+    
+    return {
+        "sum_wet_leaves": sum_wet_leaves,
+        "sum_dry_leaves": sum_dry_leaves,
+        "sum_flour": sum_flour,
+        "sum_shipment_quantity": sum_shipment_quantity
+    }
+    
+@app.get('/centra/statistics/{user_id}', tags = ["Statistics"])
+def retrieve_centra_stats(user_id: str, db: Session = Depends(get_db)):
+    sum_wet_leaves = crud.sum_get_wet_leaves_by_user_id(db, user_id)
+    sum_dry_leaves = crud.sum_get_dry_leaves_by_user_id(db, user_id)
+    sum_flour = crud.sum_get_flour_by_user_id(db, user_id)
+    sum_shipment_quantity = crud.sum_get_shipment_quantity_by_user_id(db, user_id)
+    return {
+        "sum_wet_leaves": format_large_number(sum_wet_leaves),
+        "sum_dry_leaves": format_large_number(sum_dry_leaves),
+        "sum_flour": format_large_number(sum_flour),
+        "sum_shipment_quantity": format_large_number(sum_shipment_quantity)
+    }
+
 if __name__ == '__main__':
     uvicorn.run("main:app", host = "0.0.0.0", reload=True)

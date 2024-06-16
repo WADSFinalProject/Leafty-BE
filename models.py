@@ -17,6 +17,8 @@ class SessionData(Base):
 
     session_id = Column(String(36), unique=True, primary_key=True)
     user_id = Column(String(36), ForeignKey('users.UserID'))
+    user_role = Column(Integer, ForeignKey('roles.RoleID'))
+    user_email = Column(String(36))
 
 class RoleModel(Base):
     __tablename__ = "roles"

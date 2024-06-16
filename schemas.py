@@ -7,6 +7,8 @@ class RoleBase(BaseModel):
     
 class SessionData(BaseModel):
     user_id: str
+    user_role: int
+    user_email: str
 
 class RoleCreate(RoleBase):
     pass
@@ -22,6 +24,7 @@ class UserBase(BaseModel):
     Email: str
     PhoneNumber: Optional[int]
     RoleID: int
+    Password: str
 
 class UserCreate(UserBase):
     Password: str
@@ -150,8 +153,8 @@ class ShipmentBase(BaseModel):
     Check_in_Date: Optional[datetime]= None
     Check_in_Quantity: Optional[int]= None
     # Harbor_Reception_File: Optional[str]= None
-    # Rescalled_Weight: Optional[float]= None
-    # Rescalled_Date: Optional[datetime]= None
+    Rescalled_Weight: Optional[float]= None
+    Rescalled_Date: Optional[datetime]= None
     # Centra_Reception_File: Optional[str]= None
 
 class ShipmentCreate(ShipmentBase):
