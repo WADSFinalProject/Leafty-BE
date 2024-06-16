@@ -139,6 +139,12 @@ def get_wet_leaves_by_id(db: Session, wet_leaves_id: int):
 def get_wet_leaves_by_user_id(db: Session, user_id: str):
     return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
 
+def sum_total_wet_leaves(db: Session):
+    wet_leaves_entries = db.query(models.WetLeaves).all()
+    sum_wet_leaves = int(sum(entry.Weight for entry in wet_leaves_entries))
+    return sum_wet_leaves
+
+
 def sum_get_wet_leaves_by_user_id(db: Session, user_id: str):
      # Assuming WetLeaves has a field 'value' that you want to sum up
     wet_leaves_entries = db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
@@ -205,6 +211,11 @@ def get_dry_leaves_by_user_id(db: Session, user_id: str):
 def get_dry_leaves_by_user_and_id(db: Session, user_id: str, dry_leaves_id: int):
     return db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id, models.DryLeaves.DryLeavesID == dry_leaves_id).first()
 
+def sum_total_dry_leaves(db: Session):
+    dry_leaves_entries = db.query(models.DryLeaves).all()
+    sum_dry_leaves = int(sum(entry.Processed_Weight for entry in dry_leaves_entries))
+    return sum_dry_leaves
+
 def sum_get_dry_leaves_by_user_id(db: Session, user_id: str):
      # Assuming WetLeaves has a field 'value' that you want to sum up
     dry_leaves_entries = db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id).all()
@@ -263,6 +274,11 @@ def get_flour_by_id(db: Session, flour_id: int):
 
 def get_flour_by_user_id(db: Session, user_id: str):
     return db.query(models.Flour).filter(models.Flour.UserID == user_id).all()
+
+def sum_total_flour(db: Session):
+    flour_entries = db.query(models.Flour).all()
+    sum_flour = int(sum(entry.Flour_Weight for entry in flour_entries))
+    return sum_flour
 
 def sum_get_flour_by_user_id(db: Session, user_id: str):
      # Assuming WetLeaves has a field 'value' that you want to sum up
@@ -400,6 +416,11 @@ def get_shipment_by_user_id(db: Session, user_id: str):
         }
         shipment_data.append(shipment_dict)
     return shipment_data
+
+def sum_total_shipment_quantity(db: Session):
+    shipment_quantity_entries = db.query(models.Shipment).all()
+    sum_shipment_quantity = int(sum(entry.ShipmentQuantity for entry in shipment_quantity_entries))
+    return sum_shipment_quantity
 
 def sum_get_shipment_quantity_by_user_id(db: Session, user_id: str):
      # Assuming WetLeaves has a field 'value' that you want to sum up

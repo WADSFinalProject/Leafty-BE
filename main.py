@@ -460,6 +460,20 @@ def delete_location_by_id(location_id: int, db: Session = Depends(get_db)):
     else:
         return {"message": "location not found or deletion failed"}
     
+@app.get('/statistics/all', tags=["Statistics"])
+def retrieve_all_stats(db: Session = Depends(get_db)):
+    sum_wet_leaves = crud.sum_total_wet_leaves(db)
+    sum_dry_leaves = crud.sum_total_dry_leaves(db)
+    sum_flour = crud.sum_total_flour(db)
+    sum_shipment_quantity = crud.sum_total_shipment_quantity(db)
+    
+    return {
+        "sum_wet_leaves": format_large_number(sum_wet_leaves),
+        "sum_dry_leaves": format_large_number(sum_dry_leaves),
+        "sum_flour": format_large_number(sum_flour),
+        "sum_shipment_quantity": format_large_number(sum_shipment_quantity)
+    }
+    
 @app.get('/centra/statistics/{user_id}', tags = ["Statistics"])
 def retrieve_centra_stats(user_id: str, db: Session = Depends(get_db)):
     sum_wet_leaves = crud.sum_get_wet_leaves_by_user_id(db, user_id)
