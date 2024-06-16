@@ -7,9 +7,17 @@ import models
 import schemas
 import uuid
 
-# sessions
-def create_session(db: Session, session_id: str, user_id: str):
-    db_session = models.SessionData(session_id=session_id, user_id=user_id)
+#sessions
+def create_session(db: Session, session_id:str, user_id: str):
+    user = db.query(models.User).filter(models.User.UserID == user_id).first()
+    
+    if user is None:
+        raise ValueError(f"No user found with user_id: {user_id}")
+    
+    user_role = user.RoleID
+    user_email = user.Email
+
+    db_session = models.SessionData(session_id=session_id, user_id = user_id, user_role = user_role, user_email = user_email)
     db.add(db_session)
     db.commit()
 
@@ -131,6 +139,15 @@ def get_wet_leaves_by_id(db: Session, wet_leaves_id: int):
 def get_wet_leaves_by_user_id(db: Session, user_id: str):
     return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
 
+def sum_get_wet_leaves_by_user_id(db: Session, user_id: str):
+     # Assuming WetLeaves has a field 'value' that you want to sum up
+    wet_leaves_entries = db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
+    
+    # Calculate the sum of the 'value' field from the retrieved entries
+    sum_wet_leaves = int(sum(entry.Weight for entry in wet_leaves_entries))
+    
+    return sum_wet_leaves
+
 def get_wet_leaves_by_user_and_id(db: Session, user_id: str, wet_leaves_id: int):
     return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id, models.WetLeaves.WetLeavesID == wet_leaves_id).first()
 
@@ -188,6 +205,15 @@ def get_dry_leaves_by_user_id(db: Session, user_id: str):
 def get_dry_leaves_by_user_and_id(db: Session, user_id: str, dry_leaves_id: int):
     return db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id, models.DryLeaves.DryLeavesID == dry_leaves_id).first()
 
+def sum_get_dry_leaves_by_user_id(db: Session, user_id: str):
+     # Assuming WetLeaves has a field 'value' that you want to sum up
+    dry_leaves_entries = db.query(models.DryLeaves).filter(cast(models.DryLeaves.UserID, UUID) == user_id).all()
+    
+    # Calculate the sum of the 'value' field from the retrieved entries
+    sum_dry_leaves = int(sum(entry.Processed_Weight for entry in dry_leaves_entries))
+    
+    return sum_dry_leaves
+
 def delete_dry_leaves_by_id(db: Session, dry_leaves_id: int):
     dry_leaves = db.query(models.DryLeaves).filter(models.DryLeaves.DryLeavesID == dry_leaves_id).first()
     if dry_leaves:
@@ -237,6 +263,15 @@ def get_flour_by_id(db: Session, flour_id: int):
 
 def get_flour_by_user_id(db: Session, user_id: str):
     return db.query(models.Flour).filter(models.Flour.UserID == user_id).all()
+
+def sum_get_flour_by_user_id(db: Session, user_id: str):
+     # Assuming WetLeaves has a field 'value' that you want to sum up
+    flour_entries = db.query(models.Flour).filter(cast(models.Flour.UserID, UUID) == user_id).all()
+    
+    # Calculate the sum of the 'value' field from the retrieved entries
+    sum_flour = int(sum(entry.Flour_Weight for entry in flour_entries))
+    
+    return sum_flour
 
 def delete_flour_by_id(db: Session, flour_id: int):
     flour = db.query(models.Flour).filter(models.Flour.FlourID == flour_id).first()
@@ -365,6 +400,15 @@ def get_shipment_by_user_id(db: Session, user_id: str):
         }
         shipment_data.append(shipment_dict)
     return shipment_data
+
+def sum_get_shipment_quantity_by_user_id(db: Session, user_id: str):
+     # Assuming WetLeaves has a field 'value' that you want to sum up
+    shipment_quantity_entries = db.query(models.Shipment).filter(cast(models.Shipment.UserID, UUID) == user_id).all()
+    
+    # Calculate the sum of the 'value' field from the retrieved entries
+    sum_shipment_quantity = int(sum(entry.ShipmentQuantity for entry in shipment_quantity_entries))
+    
+    return sum_shipment_quantity
 
 def get_shipment_ids_with_date_but_no_checkin(db: Session) -> List[str]:
     shipments = db.query(models.Shipment.ShipmentID).filter(
