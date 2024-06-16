@@ -321,7 +321,8 @@ def get_shipment(db: Session, limit: int = 100):
             "ShipmentQuantity": shipment.ShipmentQuantity,
             "ShipmentDate": shipment.ShipmentDate,
             "Check_in_Date": shipment.Check_in_Date,
-            "Check_in_Quantity": shipment.Check_in_Quantity
+            "Check_in_Quantity": shipment.Check_in_Quantity,
+            "Rescalled_Weight" : shipment.Rescalled_Weight,
         }
         shipment_data.append(shipment_dict)
     return shipment_data
@@ -338,7 +339,8 @@ def get_shipment_by_id(db: Session, shipment_id: int):
         ShipmentQuantity=shipment.ShipmentQuantity,
         ShipmentDate=shipment.ShipmentDate,
         Check_in_Date=shipment.Check_in_Date,
-        Check_in_Quantity=shipment.Check_in_Quantity
+        Check_in_Quantity=shipment.Check_in_Quantity,
+        Rescalled_Weight = shipment.Rescalled_Weight
         # Include other fields as necessary
     )
 
@@ -357,7 +359,8 @@ def get_shipment_by_user_id(db: Session, user_id: str):
             "ShipmentQuantity": shipment.ShipmentQuantity,
             "ShipmentDate": shipment.ShipmentDate,
             "Check_in_Date": shipment.Check_in_Date,
-            "Check_in_Quantity": shipment.Check_in_Quantity
+            "Check_in_Quantity": shipment.Check_in_Quantity,
+            "Rescalled_Weight" : shipment.Rescalled_Weight,
             
         }
         shipment_data.append(shipment_dict)

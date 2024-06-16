@@ -144,7 +144,7 @@ class ShipmentBase(BaseModel):
     Check_in_Date: Optional[datetime]= None
     Check_in_Quantity: Optional[int]= None
     # Harbor_Reception_File: Optional[str]= None
-    # Rescalled_Weight: Optional[float]= None
+    Rescalled_Weight: Optional[float]= None
     # Rescalled_Date: Optional[datetime]= None
     # Centra_Reception_File: Optional[str]= None
 
