@@ -383,18 +383,26 @@ def get_shipment_by_id(db: Session, shipment_id: int):
     shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    return schemas.Shipment(
-        ShipmentID=shipment.ShipmentID,
-        CourierID=shipment.CourierID,
-        UserID=shipment.UserID,
-        FlourIDs=[flour.FlourID for flour in shipment.flours],
-        ShipmentQuantity=shipment.ShipmentQuantity,
-        ShipmentDate=shipment.ShipmentDate,
-        Check_in_Date=shipment.Check_in_Date,
-        Check_in_Quantity=shipment.Check_in_Quantity,
-        Rescalled_Weight = shipment.Rescalled_Weight,
-        Rescalled_Date = shipment.Rescalled_Date
-    )
+    
+    flour_weight_sum = sum(flour.Flour_Weight for flour in shipment.flours)
+    courier = db.query(models.Courier).filter(models.Courier.CourierID == shipment.CourierID).first()
+    user = db.query(models.User).filter(models.User.UserID == shipment.UserID).first()
+    
+    return {
+        "ShipmentID": shipment.ShipmentID,
+        "CourierID": shipment.CourierID,
+        "UserID": shipment.UserID,
+        "FlourIDs": [flour.FlourID for flour in shipment.flours],
+        "ShipmentQuantity": shipment.ShipmentQuantity,
+        "ShipmentDate": shipment.ShipmentDate,
+        "Check_in_Date": shipment.Check_in_Date,
+        "Check_in_Quantity": shipment.Check_in_Quantity,
+        "Rescalled_Weight": shipment.Rescalled_Weight,
+        "Rescalled_Date": shipment.Rescalled_Date,
+        "FlourWeightSum": flour_weight_sum,
+        "CourierName": courier.CourierName if courier else None,
+        "UserName": user.Username if user else None
+    }
 
 def get_all_shipment_ids(db: Session):
     return db.query(models.Shipment).all()
