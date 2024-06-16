@@ -162,6 +162,16 @@ def update_user(user_id: str, user: schemas.UserUpdate, db: Session = Depends(ge
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_user
 
+@app.put('/user/admin_put/{user_id}', response_model=schemas.User, tags=["Users"])
+def update_user(user_id: str, user: schemas.AdminUserUpdate, db: Session = Depends(get_db)):
+    try:
+        updated_user = crud.admin_update_user(db=db, user_id=user_id, user_update=user)
+        if not updated_user:
+            raise HTTPException(status_code=404, detail="User does not exist")
+        return updated_user
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.put('/user/update_role/{user_id}', response_model=schemas.User, tags=["Users"])
 def update_user_role(user_id: str, role_update: schemas.UserRoleUpdate, db: Session = Depends(get_db)):
     role_name_to_id = {

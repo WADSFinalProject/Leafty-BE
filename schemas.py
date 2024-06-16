@@ -34,6 +34,12 @@ class UserUpdate(BaseModel):
     Username: Optional[str] = None
     Email: Optional[str] = None
     
+class AdminUserUpdate(BaseModel):
+    Username: Optional[str] 
+    Email: Optional[str] 
+    PhoneNumber: Optional[int] 
+    RoleName: Optional[str] 
+
 class User(UserBase):
     UserID: UUID4
     role: Role

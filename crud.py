@@ -53,6 +53,32 @@ def update_user(db: Session, user_id: uuid.UUID, user_update: schemas.UserUpdate
     db.refresh(user)
     return user
 
+def admin_update_user(db: Session, user_id: uuid.UUID, user_update: schemas.AdminUserUpdate):
+    user = db.query(models.User).filter(models.User.UserID == user_id).first()
+    if not user:
+        return None
+    if user_update.Username is not None:
+        user.Username = user_update.Username
+    if user_update.Email is not None:
+        user.Email = user_update.Email
+    if user_update.PhoneNumber is not None:
+        user.PhoneNumber = user_update.PhoneNumber
+    if user_update.RoleName is not None:
+       role_name_to_id = {
+        "Centra": 1,
+        "Harbor": 2,
+        "Company": 3,
+        "Admin": 4,
+        "Unverified": 5,
+        "Rejected": 6
+    }
+    role = role_name_to_id.get(user_update.RoleName)
+    if role:
+        user.RoleID = role
+    db.commit()
+    db.refresh(user)
+    return user
+
 def update_user_role(db: Session, user_id: str, role_id: int):
     user = db.query(models.User).filter(models.User.UserID == user_id).first()
     if not user:
