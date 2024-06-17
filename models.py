@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTime, Enum, BigInteger, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, ForeignKey, UUID
+from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Boolean
 
 Base = declarative_base()
 
@@ -91,9 +91,9 @@ class Shipment(Base):
     ShipmentDate = Column(DateTime, nullable=True)
     Check_in_Date = Column(DateTime, nullable=True)
     Check_in_Quantity = Column(Integer, nullable=True)
-    Harbor_Reception_File = Column(String(50), nullable=True)
+    Harbor_Reception_File = Column(Boolean,nullable=True)
     Rescalled_Weight = Column(Float, nullable=True)
     Rescalled_Date = Column(DateTime, nullable=True)
-    Centra_Reception_File = Column(String(50), nullable=True)
+    Centra_Reception_File = Column(Boolean,nullable=True)
     
     flours = relationship("Flour", secondary=shipment_flour_association, backref="shipments")

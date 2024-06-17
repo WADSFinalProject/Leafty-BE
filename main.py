@@ -175,6 +175,13 @@ def update_user(user_id: str, user: schemas.UserUpdate, db: Session = Depends(ge
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_user
 
+@app.put('/user/update_phone/{user_id}', response_model=schemas.User, tags=["Users"])
+def update_user_phone_endpoint(user_id: str, phone_update: schemas.UserPhoneUpdate, db: Session = Depends(get_db)):
+    updated_user = crud.update_user_phone(db=db, user_id=user_id, PhoneNumber=phone_update.PhoneNumber)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated_user
+
 @app.put('/user/admin_put/{user_id}', response_model=schemas.User, tags=["Users"])
 def update_user(user_id: str, user: schemas.AdminUserUpdate, db: Session = Depends(get_db)):
     try:
@@ -204,6 +211,7 @@ def update_user_role(user_id: str, role_update: schemas.UserRoleUpdate, db: Sess
     if not updated_user:
         raise HTTPException(status_code=404, detail="User does not exist or role does not exist")
     return updated_user
+
 
 @app.delete("/user/delete/{user_id}", response_class=JSONResponse, tags=["Users"])
 def delete_user(user_id: str, db: Session = Depends(get_db)):
@@ -439,6 +447,27 @@ def update_shipment_date(shipment_id: int, shipment_date_update: schemas.Shipmen
 @app.put("/shipment/update_check_in/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
 def update_shipment_check_in(shipment_id: int, check_in_update: schemas.ShipmentCheckInUpdate, db: Session = Depends(get_db)):
     updated_shipment = crud.update_shipment_check_in(db=db, shipment_id=shipment_id, check_in_update=check_in_update)
+    if not updated_shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    return updated_shipment
+
+@app.put("/shipment/update_rescalled_weight/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
+def update_shipment_rescalled_weight(shipment_id: int, update_data: schemas.ShipmentRescalledWeightUpdate, db: Session = Depends(get_db)):
+    updated_shipment = crud.update_shipment_rescalled_weight_and_date(db=db, shipment_id=shipment_id, update_data=update_data)
+    if not updated_shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    return updated_shipment
+
+@app.put("/shipment/update_harbor_reception/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
+def update_shipment_harbor_reception(shipment_id: int, update_data: schemas.ShipmentHarborReceptionUpdate, db: Session = Depends(get_db)):
+    updated_shipment = crud.update_shipment_harbor_reception(db=db, shipment_id=shipment_id, update_data=update_data)
+    if not updated_shipment:
+        raise HTTPException(status_code=404, detail="Shipment not found")
+    return updated_shipment
+
+@app.put("/shipment/update_centra_reception/{shipment_id}", response_model=schemas.Shipment, tags=["Shipment"])
+def update_shipment_centra_reception(shipment_id: int, update_data: schemas.ShipmentCentraReceptionUpdate, db: Session = Depends(get_db)):
+    updated_shipment = crud.update_shipment_centra_reception(db=db, shipment_id=shipment_id, update_data=update_data)
     if not updated_shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
     return updated_shipment

@@ -31,6 +31,9 @@ class UserCreate(UserBase):
     
 class UserRoleUpdate(BaseModel):
     RoleName: str
+  
+class UserPhoneUpdate(BaseModel):
+    PhoneNumber: int
 
 class UserUpdate(BaseModel):
     Password: Optional[str] = None
@@ -153,10 +156,10 @@ class ShipmentBase(BaseModel):
     ShipmentDate: Optional[datetime] = None 
     Check_in_Date: Optional[datetime]= None
     Check_in_Quantity: Optional[int]= None
-    # Harbor_Reception_File: Optional[str]= None
+    Harbor_Reception_File: Optional[bool]= None
     Rescalled_Weight: Optional[float]= None
     Rescalled_Date: Optional[datetime]= None
-    # Centra_Reception_File: Optional[str]= None
+    Centra_Reception_File: Optional[bool]= None
 
 class ShipmentCreate(ShipmentBase):
     pass
@@ -179,6 +182,16 @@ class ShipmentDateUpdate(BaseModel):
 class ShipmentCheckInUpdate(BaseModel):
     Check_in_Date: Optional[datetime] = None
     Check_in_Quantity: Optional[int] = None
+    
+class ShipmentRescalledWeightUpdate(BaseModel):
+    Rescalled_Weight: float
+    Rescalled_Date: datetime
+
+class ShipmentHarborReceptionUpdate(BaseModel):
+    Harbor_Reception_File: bool
+
+class ShipmentCentraReceptionUpdate(BaseModel):
+    Centra_Reception_File: bool
     
 class ShipmentFlourAssociationBase(BaseModel):
     shipment_id: int

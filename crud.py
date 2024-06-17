@@ -96,6 +96,15 @@ def update_user_role(db: Session, user_id: str, role_id: int):
     db.refresh(user)
     return user
 
+def update_user_phone(db: Session, user_id: str, PhoneNumber: int):
+    user = db.query(models.User).filter(models.User.UserID == user_id).first()
+    if not user:
+        return None
+    user.PhoneNumber = PhoneNumber
+    db.commit()
+    db.refresh(user)
+    return user
+
 def delete_user_by_id(db: Session, user_id: str):
     db_user = db.query(models.User).filter(models.User.UserID == user_id).first()
     if db_user:
@@ -559,6 +568,76 @@ def update_shipment_check_in(db: Session, shipment_id: int, check_in_update: sch
         ShipmentDate=db_shipment.ShipmentDate,
         Check_in_Date=db_shipment.Check_in_Date,
         Check_in_Quantity=db_shipment.Check_in_Quantity,
+    )
+    return shipment_data
+
+def update_shipment_rescalled_weight_and_date(db: Session, shipment_id: int, update_data: schemas.ShipmentRescalledWeightUpdate):
+    db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    if not db_shipment:
+        return None
+    db_shipment.Rescalled_Weight = update_data.Rescalled_Weight
+    db_shipment.Rescalled_Date = update_data.Rescalled_Date
+    db.commit()
+    db.refresh(db_shipment)
+    return {
+        "ShipmentID": db_shipment.ShipmentID,
+        "CourierID": db_shipment.CourierID,
+        "UserID": db_shipment.UserID,
+        "FlourIDs": [flour.FlourID for flour in db_shipment.flours],
+        "ShipmentQuantity": db_shipment.ShipmentQuantity,
+        "ShipmentDate": db_shipment.ShipmentDate,
+        "Check_in_Date": db_shipment.Check_in_Date,
+        "Check_in_Quantity": db_shipment.Check_in_Quantity,
+        "Rescalled_Weight": db_shipment.Rescalled_Weight,
+        "Rescalled_Date": db_shipment.Rescalled_Date,
+    }
+    
+
+def update_shipment_harbor_reception(db: Session, shipment_id: int, update_data: schemas.ShipmentHarborReceptionUpdate):
+    db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    if not db_shipment:
+        return None
+    db_shipment.Harbor_Reception_File = update_data.Harbor_Reception_File
+    db.commit()
+    db.refresh(db_shipment)
+
+    shipment_data = schemas.Shipment(
+        ShipmentID=db_shipment.ShipmentID,
+        CourierID=db_shipment.CourierID,
+        UserID=db_shipment.UserID,
+        FlourIDs=[flour.FlourID for flour in db_shipment.flours],
+        ShipmentQuantity=db_shipment.ShipmentQuantity,
+        ShipmentDate=db_shipment.ShipmentDate,
+        Check_in_Date=db_shipment.Check_in_Date,
+        Check_in_Quantity=db_shipment.Check_in_Quantity,
+        Rescalled_Weight=db_shipment.Rescalled_Weight,
+        Rescalled_Date=db_shipment.Rescalled_Date,
+        Harbor_Reception_File=db_shipment.Harbor_Reception_File,
+        Centra_Reception_File=db_shipment.Centra_Reception_File,
+    )
+    return shipment_data
+
+def update_shipment_centra_reception(db: Session, shipment_id: int, update_data: schemas.ShipmentCentraReceptionUpdate):
+    db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
+    if not db_shipment:
+        return None
+    db_shipment.Centra_Reception_File = update_data.Centra_Reception_File
+    db.commit()
+    db.refresh(db_shipment)
+    
+    shipment_data = schemas.Shipment(
+        ShipmentID=db_shipment.ShipmentID,
+        CourierID=db_shipment.CourierID,
+        UserID=db_shipment.UserID,
+        FlourIDs=[flour.FlourID for flour in db_shipment.flours],
+        ShipmentQuantity=db_shipment.ShipmentQuantity,
+        ShipmentDate=db_shipment.ShipmentDate,
+        Check_in_Date=db_shipment.Check_in_Date,
+        Check_in_Quantity=db_shipment.Check_in_Quantity,
+        Rescalled_Weight=db_shipment.Rescalled_Weight,
+        Rescalled_Date=db_shipment.Rescalled_Date,
+        Harbor_Reception_File=db_shipment.Harbor_Reception_File,
+        Centra_Reception_File=db_shipment.Centra_Reception_File,
     )
     return shipment_data
 
