@@ -58,6 +58,7 @@ class WetLeaves(Base):
     UserID = Column(String(36), ForeignKey("users.UserID"))
     Weight = Column(Float)
     ReceivedTime = Column(DateTime)
+    Expiration = Column(DateTime)
     Status = Column(String(50), default="Awaiting")
 
 class DryLeaves(Base):

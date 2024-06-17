@@ -103,6 +103,7 @@ class WetLeavesBase(BaseModel):
     UserID: UUID4
     Weight: float
     ReceivedTime: datetime
+    Expiration: datetime
     Status: Optional[str] = "Awaiting"
 
 class WetLeavesCreate(WetLeavesBase):
