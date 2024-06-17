@@ -409,7 +409,9 @@ def get_shipment(db: Session, limit: int = 100):
             "Check_in_Date": shipment.Check_in_Date,
             "Check_in_Quantity": shipment.Check_in_Quantity,
             "Rescalled_Weight" : shipment.Rescalled_Weight,
-            "Rescalled_Date" : shipment.Rescalled_Date
+            "Rescalled_Date" : shipment.Rescalled_Date,
+            "Harbor_Reception_File": shipment.Harbor_Reception_File,
+            "Centra_Reception_File": shipment.Centra_Reception_File,
         }
         shipment_data.append(shipment_dict)
     return shipment_data
@@ -434,6 +436,8 @@ def get_shipment_by_id(db: Session, shipment_id: int):
         "Check_in_Quantity": shipment.Check_in_Quantity,
         "Rescalled_Weight": shipment.Rescalled_Weight,
         "Rescalled_Date": shipment.Rescalled_Date,
+        "Harbor_Reception_File": shipment.Harbor_Reception_File,
+        "Centra_Reception_File": shipment.Centra_Reception_File,
         "FlourWeightSum": flour_weight_sum,
         "CourierName": courier.CourierName if courier else None,
         "UserName": user.Username if user else None
