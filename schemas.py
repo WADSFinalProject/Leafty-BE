@@ -179,6 +179,15 @@ class ShipmentDateUpdate(BaseModel):
 class ShipmentCheckInUpdate(BaseModel):
     Check_in_Date: Optional[datetime] = None
     Check_in_Quantity: Optional[int] = None
+    
+class ShipmentFlourAssociationBase(BaseModel):
+    shipment_id: int
+    flour_id: int
+
+class ShipmentFlourAssociationCreate(ShipmentFlourAssociationBase):
+    pass
+
+class ShipmentFlourAssociation(ShipmentFlourAssociationBase):
 
     class Config:
         orm_mode = True

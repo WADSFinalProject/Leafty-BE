@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, Request, Response, status, __version__
+from fastapi import FastAPI, HTTPException, Depends, Request, Response, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
@@ -17,6 +17,7 @@ from typing import List
 from database import SessionLocal, engine
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from fastapi_sessions.session_verifier import SessionVerifier
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -58,7 +59,7 @@ def get_db():
 cookie_params = CookieParameters(
     secure=True,  # Ensures cookie is sent over HTTPS
     httponly=True,
-    samesite="none"  # Allows the cookie to be sent with cross-origin requests
+    samesite="none"  # Allows the cookie to be sent with cross-origin requests
 )
 
 cookie = SessionCookie(
@@ -88,7 +89,6 @@ async def create_session(user_id: str, response: Response, db: Session = Depends
     cookie.attach_to_response(response, session)
 
     response.headers["Set-Cookie"] += "; SameSite=None"
-
 
     crud.create_session(db, session, user_id)
 
@@ -162,6 +162,11 @@ def get_user(user_id: str, db: Session = Depends(get_db)):
 def get_user(email: str, db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, email)
     return user
+
+@app.get('/users_with_shipments', tags=["Users", "Shipment"])
+def get_users_with_shipments(db: Session = Depends(get_db)):
+    users = crud.get_users_with_shipments(db)
+    return users
 
 @app.put('/user/put/{user_id}', response_model=schemas.UserUpdate, tags=["Users"])
 def update_user(user_id: str, user: schemas.UserUpdate, db: Session = Depends(get_db)):
@@ -510,6 +515,11 @@ def retrieve_centra_stats(user_id: str, db: Session = Depends(get_db)):
         "sum_flour": format_large_number(sum_flour),
         "sum_shipment_quantity": format_large_number(sum_shipment_quantity)
     }
+
+# Shipment-Flour Associations
+@app.get("/shipment_flour_association/get", response_model=List[schemas.ShipmentFlourAssociation], tags=["ShipmentFlourAssociation"])
+def get_shipment_flour_associations(db: Session = Depends(get_db)):
+    return crud.get_shipment_flour_associations(db)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host = "0.0.0.0", reload=True)

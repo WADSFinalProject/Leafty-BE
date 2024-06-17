@@ -474,6 +474,12 @@ def get_shipment_ids_with_date_but_no_checkin(db: Session) -> List[str]:
     ).all()
     return [shipment[0] for shipment in shipments]  # Extracting the IDs from the tuples
 
+def get_shipment_flour_associations(db: Session):
+    return db.query(models.shipment_flour_association).all()
+
+def get_flours_by_shipment_id(db: Session, shipment_id: int):
+    return db.query(models.shipment_flour_association).filter(models.shipment_flour_association.c.shipment_id == shipment_id).all()
+
 
 def delete_shipment_by_id(db: Session, shipment_id: int):
     shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
