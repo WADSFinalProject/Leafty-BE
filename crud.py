@@ -1,11 +1,31 @@
 from sqlalchemy import cast
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
+from datetime import datetime, timedelta    
 from fastapi import HTTPException, Depends
 from typing import List
 import models
 import schemas
 import uuid
+
+#otp
+def create_otp(db: Session, otp: schemas.OTPCreate):
+    db_otp = models.OTP(
+        email=otp.email,
+        otp_code=otp.otp_code,
+        expires_at=datetime.now() + timedelta(minutes=2)
+    )
+    db.add(db_otp)
+    db.commit()
+    db.refresh(db_otp)
+    return db_otp
+
+def get_otp_by_email(db: Session, email: str):
+    return db.query(models.OTP).filter(models.OTP.email == email).first()
+
+def delete_otp(db: Session, email: str):
+    db.query(models.OTP).filter(models.OTP.email == email).delete()
+    db.commit()
 
 #sessions
 def create_session(db: Session, session_id:str, user_id: str):

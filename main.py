@@ -19,7 +19,11 @@ from fastapi_sessions.frontends.implementations import SessionCookie, CookiePara
 from fastapi_sessions.session_verifier import SessionVerifier
 
 models.Base.metadata.create_all(bind=engine)
-
+import pyotp
+from datetime import datetime, timedelta    
+import smtplib
+from dotenv import load_dotenv
+import os
 app = FastAPI()
 
 backend = InMemoryBackend[UUID, SessionData]()
@@ -111,6 +115,60 @@ async def del_session(response: Response, session_id: UUID = Depends(cookie), db
 
     return "deleted session"
 
+# OTP
+@app.post("/generate_otp", tags=["OTP"])
+def generate_otp(request: schemas.GenerateOTPRequest, db: Session = Depends(get_db)):
+    email = request.email
+    
+    secret = pyotp.random_base32()
+    otp = pyotp.TOTP(secret)
+    otp_code = otp.now()
+
+    db_otp = crud.get_otp_by_email(db, email)    
+    if db_otp:
+        crud.delete_otp(db, email)
+
+    hashed_otp_code = bcrypt.hashpw(otp_code.encode('utf-8'), bcrypt.gensalt())
+
+    otp_create = schemas.OTPCreate(email=email, otp_code=hashed_otp_code, expires_at=datetime.now() + timedelta(minutes=2))
+    crud.create_otp(db, otp_create)
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+
+    load_dotenv()
+    USER_EMAIL = os.getenv("EMAIL")
+    USER_PASSWORD = os.getenv("PASSWORD")
+    
+    server.login(USER_EMAIL, USER_PASSWORD)
+
+    body = f"Your OTP is {otp_code}."
+    subject = "OTP verification using python" 
+    message = f'subject:{subject}\n\n{body}'
+
+    server.sendmail(USER_EMAIL, email, message)
+    server.quit()
+
+    print(f"OTP has been sent to {email}")
+    print(f"Generated OTP code for {email}: {otp_code}")
+
+    return {"message": "OTP generated and sent to your email"}
+
+# Endpoint to verify OTP
+@app.post("/verify_otp", tags=["OTP"])
+def verify_otp(request: schemas.VerifyOTPRequest, db: Session = Depends(get_db)):
+    email = request.email
+    otp_code = request.otp_code
+
+    db_otp = crud.get_otp_by_email(db, email)
+    if not db_otp or not bcrypt.checkpw(otp_code.encode('utf-8'), db_otp.otp_code.encode('utf-8')) or db_otp.expires_at < datetime.now():
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+    
+    # OTP is valid, delete it from the database
+    crud.delete_otp(db, email)
+    
+    return {"message": "OTP verified successfully"}
+    
 # Roles
 @app.post("/role/post", response_model=schemas.Role, tags=["Roles"])
 def create_role(role: schemas.RoleCreate, db: Session = Depends(get_db)):

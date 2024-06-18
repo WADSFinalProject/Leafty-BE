@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTime, Enum, BigInteger, Table
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTime, Enum, BigInteger, Table, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Boolean
@@ -19,6 +19,13 @@ class SessionData(Base):
     user_id = Column(String(36), ForeignKey('users.UserID'))
     user_role = Column(Integer, ForeignKey('roles.RoleID'))
     user_email = Column(String(36))
+
+class OTP(Base):
+    __tablename__ = "otp"
+
+    email = Column(String, primary_key=True, index=True)
+    otp_code = Column(String, nullable=False)
+    expires_at = Column(DateTime, nullable=False, default=func.now())
 
 class RoleModel(Base):
     __tablename__ = "roles"
