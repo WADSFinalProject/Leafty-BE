@@ -1,6 +1,5 @@
 fastapi==0.111.0
 fastapi_sessions==0.3.2
-pydantic==2.7.4
 pyotp==2.9.0
 python-dotenv==1.0.1
 python_bcrypt==0.3.2
