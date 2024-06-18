@@ -574,10 +574,8 @@ def update_shipment_check_in(db: Session, shipment_id: int, check_in_update: sch
     db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
     if not db_shipment:
         return None
-    if check_in_update.Check_in_Date is not None:
-        db_shipment.Check_in_Date = check_in_update.Check_in_Date
-    if check_in_update.Check_in_Quantity is not None:
-        db_shipment.Check_in_Quantity = check_in_update.Check_in_Quantity
+    db_shipment.Check_in_Date = check_in_update.Check_in_Date  # This will set to None if provided
+    db_shipment.Check_in_Quantity = check_in_update.Check_in_Quantity  # This will set to None if provided
 
     db.commit()
     db.refresh(db_shipment)
@@ -599,8 +597,9 @@ def update_shipment_rescalled_weight_and_date(db: Session, shipment_id: int, upd
     db_shipment = db.query(models.Shipment).filter(models.Shipment.ShipmentID == shipment_id).first()
     if not db_shipment:
         return None
-    db_shipment.Rescalled_Weight = update_data.Rescalled_Weight
-    db_shipment.Rescalled_Date = update_data.Rescalled_Date
+    db_shipment.Rescalled_Weight = update_data.Rescalled_Weight  # This will set to None if provided
+    db_shipment.Rescalled_Date = update_data.Rescalled_Date  # This will set to None if provided
+
     db.commit()
     db.refresh(db_shipment)
     return {

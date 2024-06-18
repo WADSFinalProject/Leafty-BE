@@ -205,14 +205,14 @@ class ShipmentCheckInUpdate(BaseModel):
     Check_in_Quantity: Optional[int] = None
     
 class ShipmentRescalledWeightUpdate(BaseModel):
-    Rescalled_Weight: float
-    Rescalled_Date: datetime
+    Rescalled_Weight: Optional[float] = None
+    Rescalled_Date: Optional[datetime] = None
 
 class ShipmentHarborReceptionUpdate(BaseModel):
-    Harbor_Reception_File: bool
+    Harbor_Reception_File: Optional[bool] = None
 
 class ShipmentCentraReceptionUpdate(BaseModel):
-    Centra_Reception_File: bool
+    Centra_Reception_File: Optional[bool] = None
     
 class ShipmentFlourAssociationBase(BaseModel):
     shipment_id: int
