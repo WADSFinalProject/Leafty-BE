@@ -118,7 +118,7 @@ class DryLeaves(DryLeavesBase):
 
 class DryLeavesUpdate(BaseModel):
     Weight: float
-    Status: Optional[str] = None
+    Expiration: Optional[datetime] = None
     
 class DryLeavesStatusUpdate(BaseModel):
     Status: str
@@ -141,7 +141,7 @@ class WetLeaves(WetLeavesBase):
 
 class WetLeavesUpdate(BaseModel):
     Weight: float
-    Status: Optional[str] = None
+    Expiration: Optional[datetime] = None
     
 class WetLeavesStatusUpdate(BaseModel):
     Status: str
@@ -161,10 +161,10 @@ class Flour(FlourBase):
 
     class Config:
         orm_mode = True
-
+        
 class FlourUpdate(BaseModel):
     Weight: float
-    Status: Optional[str] = None
+    Expiration: Optional[datetime] = None
     
 class FlourStatusUpdate(BaseModel):
     Status: str
