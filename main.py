@@ -323,6 +323,11 @@ def get_wet_leaves_by_user(user_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="wet leaves not found")
     return wet_leaves
 
+@app.get('/wetleaves/sum_weight_today/{user_id}', tags=["WetLeaves"])
+def get_sum_weight_wet_leaves_by_user_today(user_id: str, db: Session = Depends(get_db)):
+    total_weight = crud.sum_weight_wet_leaves_by_user_today(db, user_id)
+    return {"user_id": user_id, "total_weight_today": total_weight}
+
 @app.delete("/wetleaves/delete/{wet_leaves_id}", response_class=JSONResponse, tags=["WetLeaves"])
 def delete_wet_leaves_by_id(wet_leaves_id: int, db: Session = Depends(get_db)):
     delete = crud.delete_wet_leaves_by_id(db=db, wet_leaves_id=wet_leaves_id)

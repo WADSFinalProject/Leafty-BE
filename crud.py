@@ -1,8 +1,9 @@
-from sqlalchemy import cast
+from sqlalchemy import cast, Date, and_
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta    
 from fastapi import HTTPException, Depends
+from sqlalchemy.sql import func
 from typing import List
 import models
 import schemas
@@ -193,6 +194,17 @@ def get_wet_leaves_by_id(db: Session, wet_leaves_id: int):
 
 def get_wet_leaves_by_user_id(db: Session, user_id: str):
     return db.query(models.WetLeaves).filter(cast(models.WetLeaves.UserID, UUID) == user_id).all()
+
+
+def sum_weight_wet_leaves_by_user_today(db: Session, user_id: str):
+    today = datetime.now().date()
+    result = db.query(func.sum(models.WetLeaves.Weight)).filter(
+        and_(
+            cast(models.WetLeaves.UserID, UUID) == user_id,
+            cast(models.WetLeaves.ReceivedTime, Date) == today
+        )
+    ).scalar()
+    return result or 0
 
 def sum_total_wet_leaves(db: Session):
     wet_leaves_entries = db.query(models.WetLeaves).all()

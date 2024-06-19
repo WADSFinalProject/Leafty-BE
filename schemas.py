@@ -198,7 +198,7 @@ class Shipment(ShipmentBase):
     ShipmentID: int
 
 class ShipmentDateUpdate(BaseModel):
-    ShipmentDate: datetime
+    ShipmentDate: Optional[datetime] = None
 
 class ShipmentCheckInUpdate(BaseModel):
     Check_in_Date: Optional[datetime] = None
