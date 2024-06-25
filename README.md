@@ -11,6 +11,7 @@ This repository contains the backend code for the Leafty project, built using Py
 - [Usage](#usage)
 - [Main Folder Structure](#main-folder-structure)
 - [Promo Video](#promo-video)
+- [Deployment](#deployment)
 - [Contributors](#contributors)
 
 ## Installation
@@ -26,6 +27,13 @@ This repository contains the backend code for the Leafty project, built using Py
 ## Promo Video
 
 https://drive.google.com/file/d/1QT06VqAyc-RyDzdizvv_npj0hTLOaGlk/view?usp=sharing
+
+## Deployment
+There are several things that needs to be configured before deploying in Vercel:
+- `Pipfile` : A File that configures the Python version to 3.9, since some packages only supports Python 3.9 in Vercel.
+- `Requirements.txt`: A File that contains packages that needs to be installed for python
+- `package.json`: A File that contains which Node version needs to be used.
+- `Vercel.json`: Allows the Vercel to navigate/access the endpoints for the API.
 
 # Contributors:
 - DNeilson67 - Davin Neilson (Supervisor)
