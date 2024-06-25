@@ -35,6 +35,8 @@ There are several things that needs to be configured before deploying in Vercel:
 - `package.json`: A File that contains which Node version needs to be used.
 - `Vercel.json`: Allows the Vercel to navigate/access the endpoints for the API.
 
+By following the contents of the file above, the hosters can host the API website easily.
+
 # Contributors:
 - DNeilson67 - Davin Neilson (Supervisor)
 - Mohammad Sulthan Azka
