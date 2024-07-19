@@ -98,7 +98,7 @@ def admin_update_user(db: Session, user_id: uuid.UUID, user_update: schemas.Admi
         "Harbor": 2,
         "Company": 3,
         "Admin": 4,
-        "Unverified": 5,
+        "Customer": 5,
         "Rejected": 6
     }
     role = role_name_to_id.get(user_update.RoleName)

@@ -257,7 +257,7 @@ def update_user_role(user_id: str, role_update: schemas.UserRoleUpdate, db: Sess
         "Harbor": 2,
         "Company": 3,
         "Admin": 4,
-        "Unverified": 5,
+        "Customer": 5,
         "Rejected": 6
     }
     role_id = role_name_to_id.get(role_update.RoleName)
