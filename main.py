@@ -198,9 +198,17 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 @app.get("/user/get", response_model=List[schemas.User], tags=["Users"])
-def get_users(limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, limit=limit)
+def get_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    print(f"Fetching users with skip={skip}, limit={limit}")
+    users = crud.get_users(db, skip=skip, limit=limit)
+    print(f"Fetched {len(users)} users")
     return users
+
+@app.get("/user/count", response_model=int, tags=["Users"])
+def get_user_count(db: Session = Depends(get_db)):
+    count = crud.get_user_count(db)
+    print(f"Total user count: {count}")
+    return count
 
 @app.get("/user/get_role/{role_id}", response_model=List[schemas.User], tags=["Users"])
 def get_user(role_id: int, db: Session = Depends(get_db)):

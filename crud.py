@@ -62,8 +62,15 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_user_by_role(db: Session, RoleID: int):
     return db.query(models.User).filter(models.User.RoleID == RoleID).all()
 
-def get_users(db: Session, limit: int = 100):
-    return db.query(models.User).limit(limit).all()
+def get_users(db: Session, skip: int = 0, limit: int = 10):
+    users = db.query(models.User).offset(skip).limit(limit).all()
+    print(f"Retrieved {len(users)} users from database")
+    return users
+
+def get_user_count(db: Session):
+    count = db.query(models.User).count()
+    print(f"Total user count in database: {count}")
+    return count
 
 def get_user_by_id(db: Session, user_id: str):
     return db.query(models.User).filter(cast(models.User.UserID, UUID) == user_id).first()
